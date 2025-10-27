@@ -51,7 +51,6 @@ async function bootstrap() {
       'SWAGGER_PROTECT is true but SWAGGER_USER/PASSWORD missing. Swagger will be disabled.',
     );
   } else {
-    // Apply Basic Auth to both the UI route and the JSON spec route
     if (swaggerProtect) {
       const guard = basicAuthMiddleware(swaggerUser!, swaggerPass!);
       app.use('/api/docs', guard);
