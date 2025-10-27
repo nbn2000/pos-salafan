@@ -13,4 +13,4 @@ docker compose down
 docker compose build
 docker compose up -d
 
-echo "✅ pos-toy deployed successfully!"
+echo "✅ pos-salafan deployed successfully!"

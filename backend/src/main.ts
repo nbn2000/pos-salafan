@@ -61,8 +61,8 @@ async function bootstrap() {
     }
 
     const config = new DocumentBuilder()
-      .setTitle('Prof Qurilish Invest Backend')
-      .setDescription('Prof Qurilish Invest backend API documentation')
+      .setTitle('POS SALAFAN Backend')
+      .setDescription('POS SALAFAN backend API documentation')
       .setVersion('1.0')
       .addBearerAuth(
         {
