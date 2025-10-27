@@ -1,10 +1,10 @@
 services:
   backend:
     build: ./backend
-    container_name: pos-toy-backend
+    container_name: pos-salafan-backend
     restart: always
     ports:
-      - "4200:5000"        # ← was 4100, now 4200 (no conflict)
+      - "4300:5000" # ← was 4200, now 4300 (no conflict)
     env_file:
       - ./backend/.env
     depends_on:
@@ -12,23 +12,23 @@ services:
 
   frontend:
     build: ./frontend
-    container_name: pos-toy-frontend
+    container_name: pos-salafan-frontend
     restart: always
     ports:
-      - "3100:80"          # ← was 3000, now 3100 (no conflict)
+      - "3200:80" # ← was 3100, now 3200 (no conflict)
     depends_on:
       - backend
 
   postgres:
     image: postgres:16
-    container_name: pos-toy-postgres
+    container_name: pos-salafan-postgres
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 3564744n
-      POSTGRES_DB: pos_toy
+      POSTGRES_DB: pos_salafan
     volumes:
-      - pos_toy_data:/var/lib/postgresql/data
+      - pos_salafan_data:/var/lib/postgresql/data
 
 volumes:
-  pos_toy_data:
+  pos_salafan_data:
