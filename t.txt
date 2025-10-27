@@ -1,0 +1,56 @@
+﻿1: // src/raw-material/raw-material/services/raw-material-update.service.ts
+2: import { Injectable } from '@nestjs/common';
+3: import { UpdateRawMaterialDto } from '../dto/update-raw-material.dto';
+4: import { RawMaterialResult, toRawMaterialResult } from '../helper';
+5: import { RawMaterialBaseService } from './raw-material-base.service';
+6: 
+7: @Injectable()
+8: export class RawMaterialUpdateService extends RawMaterialBaseService {
+9:   async update(
+10:     id: string,
+11:     dto: UpdateRawMaterialDto,
+12:   ): Promise<RawMaterialResult> {
+13:     const entity = await this.getActiveRawOrThrow(id);
+14: 
+15: // snapshot BEFORE
+16: const prevName = entity.name;
+17: const prevType = entity.type;
+18: const prevMin = Number(entity.minAmount);
+19: 
+20: // apply updates
+21: if (dto.name) entity.name = dto.name;
+22: if (dto.type) entity.type = dto.type;
+23: if (dto.minAmount !== undefined) entity.minAmount = Number(dto.minAmount);
+24: 
+25: const saved = await this.repo.save(entity);
+26: 
+27: // build diff list
+28: const diffs: string[] = [];
+29: if (dto.name && dto.name !== prevName) diffs.push(`nom: Â«${prevName}Â» -> Â«${dto.name}Â»`);
+30: if (dto.type && dto.type !== prevType) diffs.push(`turi: ${prevType} -> ${dto.type}`);
+31: if (dto.minAmount !== undefined && Number(dto.minAmount) !== prevMin) {
+32:   diffs.push(`minimal miqdor: ${prevMin} -> ${Number(dto.minAmount)}`);
+33: }
+34: 
+35: // attach to any existing batch if possible (so Log row is valid)
+36: if (diffs.length) {
+37:   const anyBatch = await this.batchRepo.findOne({
+38:     where: { rawMaterialId: id },
+39:     order: { createdAt: 'DESC' },
+40:   });
+41:   if (anyBatch) {
+42:     const comment = `Â«${prevName}Â» xomashyosi ma'lumotlari o'zgartirildi: ` + diffs.join(', ');
+43:     await this.logRepo.save(
+44:       this.logRepo.create({
+45:         rawMaterialId: id,
+46:         rawMaterialBatchId: anyBatch.id,
+47:         comment,
+48:       }),
+49:     );
+50:   }
+51: }
+52: 
+53: return toRawMaterialResult(saved as any);
+54: 
+55:   }
+56: }

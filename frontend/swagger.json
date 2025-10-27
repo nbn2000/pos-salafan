@@ -1,0 +1,2124 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Your API",
+    "description": "Your API description",
+    "termsOfService": "https://www.google.com/policies/terms/",
+    "contact": {
+      "email": "contact@yourdomain.com"
+    },
+    "license": {
+      "name": "BSD License"
+    },
+    "version": "v1"
+  },
+  "host": "pos.goavto.uz",
+  "schemes": ["http", "https"],
+  "basePath": "/",
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT Authorization header using the Bearer scheme. Example: \"Bearer {your_token}\""
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ],
+  "paths": {
+    "/auth/me/": {
+      "get": {
+        "operationId": "auth_me_list",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": ["auth"]
+      },
+      "parameters": []
+    },
+    "/auth/register/": {
+      "post": {
+        "operationId": "auth_register_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "tags": ["auth"]
+      },
+      "parameters": []
+    },
+    "/auth/token/": {
+      "post": {
+        "operationId": "auth_token_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenObtainPair"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/TokenObtainPair"
+            }
+          }
+        },
+        "tags": ["auth"]
+      },
+      "parameters": []
+    },
+    "/auth/token/refresh/": {
+      "post": {
+        "operationId": "auth_token_refresh_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenRefresh"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/TokenRefresh"
+            }
+          }
+        },
+        "tags": ["auth"]
+      },
+      "parameters": []
+    },
+    "/auth/update-profile/": {
+      "patch": {
+        "operationId": "auth_update-profile_partial_update",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": ["auth"]
+      },
+      "parameters": []
+    },
+    "/categories/": {
+      "get": {
+        "operationId": "categories_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "A search term.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": ["count", "results"],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Category"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["categories"]
+      },
+      "post": {
+        "operationId": "categories_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          }
+        },
+        "tags": ["categories"]
+      },
+      "parameters": []
+    },
+    "/categories/{id}/": {
+      "get": {
+        "operationId": "categories_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          }
+        },
+        "tags": ["categories"]
+      },
+      "patch": {
+        "operationId": "categories_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          }
+        },
+        "tags": ["categories"]
+      },
+      "delete": {
+        "operationId": "categories_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": ["categories"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A unique integer value identifying this category.",
+          "required": true,
+          "type": "integer"
+        }
+      ]
+    },
+    "/count/": {
+      "get": {
+        "operationId": "count_list",
+        "description": "Placeholder for get_count function.\nImplement this function when product count retrieval is required.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": ["count"]
+      },
+      "parameters": []
+    },
+    "/debtors/": {
+      "get": {
+        "operationId": "debtors_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "A search term.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": ["count", "results"],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Debtor"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["debtors"]
+      },
+      "post": {
+        "operationId": "debtors_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Debtor"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Debtor"
+            }
+          }
+        },
+        "tags": ["debtors"]
+      },
+      "parameters": []
+    },
+    "/debtors/{id}/": {
+      "get": {
+        "operationId": "debtors_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Debtor"
+            }
+          }
+        },
+        "tags": ["debtors"]
+      },
+      "patch": {
+        "operationId": "debtors_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Debtor"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Debtor"
+            }
+          }
+        },
+        "tags": ["debtors"]
+      },
+      "delete": {
+        "operationId": "debtors_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": ["debtors"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A unique integer value identifying this debtor.",
+          "required": true,
+          "type": "integer"
+        }
+      ]
+    },
+    "/debts/": {
+      "get": {
+        "operationId": "debts_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "A search term.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "default": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": ["count", "results"],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/SaleDebt"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["debts"]
+      },
+      "parameters": []
+    },
+    "/debts/{id}/": {
+      "get": {
+        "operationId": "debts_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SaleDebt"
+            }
+          }
+        },
+        "tags": ["debts"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A unique integer value identifying this sale debt.",
+          "required": true,
+          "type": "integer"
+        }
+      ]
+    },
+    "/logs/": {
+      "get": {
+        "operationId": "logs_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "A search term.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "default": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": ["count", "results"],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/UnifiedLog"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["logs"]
+      },
+      "parameters": []
+    },
+    "/logs/{id}/": {
+      "get": {
+        "operationId": "logs_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/UnifiedLog"
+            }
+          }
+        },
+        "tags": ["logs"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/media/delete/{id}/": {
+      "delete": {
+        "operationId": "media_delete_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": ["media"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/media/upload/": {
+      "post": {
+        "operationId": "media_upload_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Media"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Media"
+            }
+          }
+        },
+        "tags": ["media"]
+      },
+      "parameters": []
+    },
+    "/merchants-sales/{merchant_id}/": {
+      "get": {
+        "operationId": "merchants-sales_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Sale"
+            }
+          }
+        },
+        "tags": ["merchants-sales"]
+      },
+      "parameters": [
+        {
+          "name": "merchant_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/merchants/": {
+      "get": {
+        "operationId": "merchants_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "A search term.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": ["count", "results"],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["merchants"]
+      },
+      "post": {
+        "operationId": "merchants_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "tags": ["merchants"]
+      },
+      "parameters": []
+    },
+    "/merchants/{id}/": {
+      "get": {
+        "operationId": "merchants_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "tags": ["merchants"]
+      },
+      "patch": {
+        "operationId": "merchants_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "tags": ["merchants"]
+      },
+      "delete": {
+        "operationId": "merchants_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": ["merchants"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this user.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/pay-debt/": {
+      "post": {
+        "operationId": "pay-debt_create",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": ["pay-debt"]
+      },
+      "parameters": []
+    },
+    "/product-batch/": {
+      "get": {
+        "operationId": "product-batch_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "A search term.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": ["count", "results"],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/ProductBatch"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["product-batch"]
+      },
+      "post": {
+        "operationId": "product-batch_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProductBatch"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProductBatch"
+            }
+          }
+        },
+        "tags": ["product-batch"]
+      },
+      "parameters": []
+    },
+    "/product-batch/{id}/": {
+      "get": {
+        "operationId": "product-batch_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProductBatch"
+            }
+          }
+        },
+        "tags": ["product-batch"]
+      },
+      "patch": {
+        "operationId": "product-batch_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProductBatch"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProductBatch"
+            }
+          }
+        },
+        "tags": ["product-batch"]
+      },
+      "delete": {
+        "operationId": "product-batch_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": ["product-batch"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A unique integer value identifying this product batch.",
+          "required": true,
+          "type": "integer"
+        }
+      ]
+    },
+    "/products/": {
+      "get": {
+        "operationId": "products_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "A search term.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": ["count", "results"],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Product"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["products"]
+      },
+      "post": {
+        "operationId": "products_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        },
+        "tags": ["products"]
+      },
+      "parameters": []
+    },
+    "/products/{sku}/": {
+      "get": {
+        "operationId": "products_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        },
+        "tags": ["products"]
+      },
+      "patch": {
+        "operationId": "products_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        },
+        "tags": ["products"]
+      },
+      "delete": {
+        "operationId": "products_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": ["products"]
+      },
+      "parameters": [
+        {
+          "name": "sku",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/sale-products/": {
+      "get": {
+        "operationId": "sale-products_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "A search term.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "default": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": ["count", "results"],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/ProductForSale"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["sale-products"]
+      },
+      "parameters": []
+    },
+    "/sale-products/{id}/": {
+      "get": {
+        "operationId": "sale-products_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProductForSale"
+            }
+          }
+        },
+        "tags": ["sale-products"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A unique integer value identifying this product.",
+          "required": true,
+          "type": "integer"
+        }
+      ]
+    },
+    "/sales/": {
+      "get": {
+        "operationId": "sales_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "A search term.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": ["count", "results"],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Sale"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["sales"]
+      },
+      "post": {
+        "operationId": "sales_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Sale"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Sale"
+            }
+          }
+        },
+        "tags": ["sales"]
+      },
+      "parameters": []
+    },
+    "/sales/{id}/": {
+      "get": {
+        "operationId": "sales_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Sale"
+            }
+          }
+        },
+        "tags": ["sales"]
+      },
+      "patch": {
+        "operationId": "sales_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Sale"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Sale"
+            }
+          }
+        },
+        "tags": ["sales"]
+      },
+      "delete": {
+        "operationId": "sales_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": ["sales"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A unique integer value identifying this sale.",
+          "required": true,
+          "type": "integer"
+        }
+      ]
+    },
+    "/suppliers/": {
+      "get": {
+        "operationId": "suppliers_list",
+        "description": "",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "A search term.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": ["count", "results"],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Supplier"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["suppliers"]
+      },
+      "post": {
+        "operationId": "suppliers_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Supplier"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Supplier"
+            }
+          }
+        },
+        "tags": ["suppliers"]
+      },
+      "parameters": []
+    },
+    "/suppliers/{id}/": {
+      "get": {
+        "operationId": "suppliers_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Supplier"
+            }
+          }
+        },
+        "tags": ["suppliers"]
+      },
+      "patch": {
+        "operationId": "suppliers_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Supplier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Supplier"
+            }
+          }
+        },
+        "tags": ["suppliers"]
+      },
+      "delete": {
+        "operationId": "suppliers_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": ["suppliers"]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A unique integer value identifying this supplier.",
+          "required": true,
+          "type": "integer"
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "User": {
+      "required": ["username", "password"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "is_superuser": {
+          "title": "Superuser status",
+          "description": "Designates that this user has all permissions without explicitly assigning them.",
+          "type": "boolean",
+          "readOnly": true
+        },
+        "username": {
+          "title": "Username",
+          "description": "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+          "type": "string",
+          "pattern": "^[\\w.@+-]+$",
+          "maxLength": 150,
+          "minLength": 1
+        },
+        "is_staff": {
+          "title": "Staff status",
+          "description": "Designates whether the user can log into this admin site.",
+          "type": "boolean",
+          "readOnly": true
+        },
+        "is_active": {
+          "title": "Active",
+          "description": "Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+          "type": "boolean",
+          "readOnly": true
+        },
+        "phone_number": {
+          "title": "Phone number",
+          "type": "string",
+          "maxLength": 120,
+          "minLength": 1
+        },
+        "date_joined": {
+          "title": "Date joined",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "full_name": {
+          "title": "Full name",
+          "type": "string",
+          "maxLength": 150
+        },
+        "user_role": {
+          "title": "User role",
+          "type": "string",
+          "enum": ["Merchant", "Admin"],
+          "readOnly": true
+        },
+        "password": {
+          "title": "Password",
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        }
+      }
+    },
+    "TokenObtainPair": {
+      "required": ["username", "password"],
+      "type": "object",
+      "properties": {
+        "username": {
+          "title": "Username",
+          "type": "string",
+          "minLength": 1
+        },
+        "password": {
+          "title": "Password",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "TokenRefresh": {
+      "required": ["refresh"],
+      "type": "object",
+      "properties": {
+        "refresh": {
+          "title": "Refresh",
+          "type": "string",
+          "minLength": 1
+        },
+        "access": {
+          "title": "Access",
+          "type": "string",
+          "readOnly": true,
+          "minLength": 1
+        }
+      }
+    },
+    "Category": {
+      "required": ["name"],
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "updated_at": {
+          "title": "Updated at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "created_by": {
+          "title": "Created by",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true,
+          "x-nullable": true
+        },
+        "updated_by": {
+          "title": "Updated by",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true,
+          "x-nullable": true
+        }
+      }
+    },
+    "Debtor": {
+      "required": ["phone_number", "full_name"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "deleted": {
+          "title": "Deleted",
+          "type": "boolean"
+        },
+        "updated_at": {
+          "title": "Updated at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "phone_number": {
+          "title": "Phone number",
+          "type": "string",
+          "maxLength": 40,
+          "minLength": 1
+        },
+        "full_name": {
+          "title": "Full name",
+          "type": "string",
+          "maxLength": 130,
+          "minLength": 1
+        },
+        "has_debt": {
+          "title": "Has debt",
+          "type": "boolean"
+        },
+        "created_by": {
+          "title": "Created by",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true,
+          "x-nullable": true
+        },
+        "updated_by": {
+          "title": "Updated by",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true,
+          "x-nullable": true
+        }
+      }
+    },
+    "SaleDebt": {
+      "required": ["sale"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "debtor": {
+          "title": "Debtor",
+          "type": "integer",
+          "x-nullable": true
+        },
+        "sale": {
+          "title": "Sale",
+          "type": "integer"
+        },
+        "amount": {
+          "title": "Amount",
+          "type": "integer",
+          "readOnly": true
+        },
+        "merchant": {
+          "title": "Merchant",
+          "type": "string",
+          "readOnly": true,
+          "minLength": 1
+        },
+        "item_count": {
+          "title": "Item count",
+          "type": "string",
+          "readOnly": true
+        },
+        "items": {
+          "title": "Items",
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "UnifiedLog": {
+      "required": ["id", "type", "action", "created_at", "note"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "integer"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "title": "Action",
+          "type": "string",
+          "minLength": 1
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "title": "Created by",
+          "type": "string",
+          "readOnly": true
+        },
+        "note": {
+          "title": "Note",
+          "type": "string",
+          "minLength": 1
+        },
+        "sku": {
+          "title": "Sku",
+          "type": "string",
+          "readOnly": true
+        },
+        "author": {
+          "title": "Author",
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "Media": {
+      "required": ["product_id"],
+      "type": "object",
+      "properties": {
+        "image": {
+          "title": "Image",
+          "type": "string",
+          "readOnly": true,
+          "format": "uri"
+        },
+        "product_id": {
+          "title": "Product id",
+          "type": "integer"
+        }
+      }
+    },
+    "ProductBatch": {
+      "required": ["quantity", "buy_price", "sell_price"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "deleted": {
+          "title": "Deleted",
+          "type": "boolean"
+        },
+        "updated_at": {
+          "title": "Updated at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "quantity": {
+          "title": "Quantity",
+          "type": "integer",
+          "maximum": 2147483647,
+          "minimum": 0
+        },
+        "buy_price": {
+          "title": "Buy price",
+          "type": "integer",
+          "maximum": 9.223372036854776e18,
+          "minimum": 0
+        },
+        "sell_price": {
+          "title": "Sell price",
+          "type": "integer",
+          "maximum": 9.223372036854776e18,
+          "minimum": 0
+        },
+        "exchange_rate": {
+          "title": "Exchange rate",
+          "type": "integer",
+          "maximum": 9.223372036854776e18,
+          "minimum": 0,
+          "x-nullable": true
+        },
+        "created_by": {
+          "title": "Created by",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true,
+          "x-nullable": true
+        },
+        "updated_by": {
+          "title": "Updated by",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true,
+          "x-nullable": true
+        },
+        "product": {
+          "title": "Product",
+          "type": "integer"
+        }
+      }
+    },
+    "Supplier": {
+      "required": ["full_name", "phone_number"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "deleted": {
+          "title": "Deleted",
+          "type": "boolean"
+        },
+        "updated_at": {
+          "title": "Updated at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "full_name": {
+          "title": "Full name",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "phone_number": {
+          "title": "Phone number",
+          "type": "string",
+          "maxLength": 20,
+          "minLength": 1
+        },
+        "created_by": {
+          "title": "Created by",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true,
+          "x-nullable": true
+        },
+        "updated_by": {
+          "title": "Updated by",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true,
+          "x-nullable": true
+        }
+      }
+    },
+    "Product": {
+      "required": [
+        "product_batch",
+        "supplier_id",
+        "category_id",
+        "name",
+        "product_type"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "product_batches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProductBatch"
+          },
+          "readOnly": true
+        },
+        "product_batch": {
+          "$ref": "#/definitions/ProductBatch"
+        },
+        "total_quantity": {
+          "title": "Total quantity",
+          "type": "integer",
+          "readOnly": true
+        },
+        "sell_price": {
+          "title": "Sell price",
+          "type": "integer",
+          "readOnly": true
+        },
+        "supplier_id": {
+          "title": "Supplier id",
+          "type": "integer"
+        },
+        "supplier": {
+          "$ref": "#/definitions/Supplier"
+        },
+        "category": {
+          "$ref": "#/definitions/Category"
+        },
+        "category_id": {
+          "title": "Category id",
+          "type": "integer"
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "deleted": {
+          "title": "Deleted",
+          "type": "boolean"
+        },
+        "updated_at": {
+          "title": "Updated at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "name": {
+          "title": "Name",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "description": {
+          "title": "Description",
+          "type": "string",
+          "maxLength": 10000
+        },
+        "image": {
+          "title": "Image",
+          "type": "string",
+          "readOnly": true,
+          "x-nullable": true,
+          "format": "uri"
+        },
+        "sku": {
+          "title": "Sku",
+          "type": "string",
+          "readOnly": true,
+          "minLength": 1
+        },
+        "product_type": {
+          "title": "Product type",
+          "type": "string",
+          "enum": ["KG", "PIECE"]
+        },
+        "created_by": {
+          "title": "Created by",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true,
+          "x-nullable": true
+        },
+        "updated_by": {
+          "title": "Updated by",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true,
+          "x-nullable": true
+        }
+      }
+    },
+    "Item": {
+      "required": ["product_id", "quantity"],
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "title": "Product id",
+          "type": "integer"
+        },
+        "quantity": {
+          "title": "Quantity",
+          "type": "integer"
+        },
+        "product": {
+          "$ref": "#/definitions/Product"
+        },
+        "product_batches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProductBatch"
+          },
+          "readOnly": true
+        }
+      }
+    },
+    "ReadPayments": {
+      "required": ["method", "amount"],
+      "type": "object",
+      "properties": {
+        "method": {
+          "title": "Method",
+          "type": "string",
+          "maxLength": 50,
+          "minLength": 1
+        },
+        "amount": {
+          "title": "Amount",
+          "type": "integer",
+          "maximum": 9.223372036854776e18,
+          "minimum": 0
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "created_by": {
+          "title": "Created by",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true,
+          "x-nullable": true
+        },
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        }
+      }
+    },
+    "Sale": {
+      "required": ["items", "payment", "total_sold"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "integer",
+          "readOnly": true
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Item"
+          }
+        },
+        "payments": {
+          "title": "Payments",
+          "type": "string",
+          "readOnly": true
+        },
+        "payment": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ReadPayments"
+          }
+        },
+        "debtor_id": {
+          "title": "Debtor id",
+          "type": "integer",
+          "x-nullable": true
+        },
+        "exchange_rate": {
+          "title": "Exchange rate",
+          "type": "integer",
+          "x-nullable": true
+        },
+        "total_sold": {
+          "title": "Total sold",
+          "type": "integer"
+        },
+        "total_paid": {
+          "title": "Total paid",
+          "type": "integer",
+          "readOnly": true
+        },
+        "merchant": {
+          "$ref": "#/definitions/User"
+        },
+        "debtor": {
+          "$ref": "#/definitions/Debtor"
+        }
+      }
+    },
+    "ProductForSale": {
+      "required": ["name"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        },
+        "name": {
+          "title": "Name",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "total_quantity": {
+          "title": "Total quantity",
+          "type": "integer",
+          "readOnly": true
+        },
+        "sell_price": {
+          "title": "Sell price",
+          "type": "integer",
+          "readOnly": true
+        },
+        "image": {
+          "title": "Image",
+          "type": "string",
+          "readOnly": true,
+          "x-nullable": true,
+          "format": "uri"
+        },
+        "created_at": {
+          "title": "Created at",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "category": {
+          "$ref": "#/definitions/Category"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,269 @@
+// components/products/TableProducts.tsx
+import SkeletonRow from '@/components/skeleton/products';
+import { Button } from '@/components/ui/button';
+import { useDebounce } from '@/hooks/useDebounce';
+import {
+  ArrowLeft,
+  Box,
+  Calendar,
+  DollarSign,
+  Hash,
+  Image as ImageIcon,
+  Package,
+} from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { UniversalPage } from '../common';
+import { ResourceDetailDialog } from '../common/ResourceDetailDialog';
+import { UniversalTable } from '../common/UniversalTable';
+import AddButtonComponent from './components/btn/addProduct';
+import Dropdown from './components/btn/Dropdown';
+
+import { useGetProductsQuery } from '@/api/products';
+
+const PAGE_SIZE = 10;
+
+export default function TableProducts() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const searchParams = new URLSearchParams(location.search);
+  const pageNumber = Number(searchParams.get('page') || 1);
+  const search = searchParams.get('search') || '';
+
+  const debouncedSearch = useDebounce(search, 500);
+
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [showFilter, setShowFilter] = useState(false);
+  const [detailItem, setDetailItem] = useState<ProductWithBatches | null>(null);
+
+  const { data, isFetching, isError, error } = useGetProductsQuery({
+    page: pageNumber,
+    take: PAGE_SIZE,
+    search: debouncedSearch || undefined,
+    sortField: 'createdAt',
+    sortOrder: 'DESC',
+  });
+
+  useEffect(() => {
+    if (isError) {
+      toast.error('Mahsulotlarni yuklashda xatolik yuz berdi');
+      console.error(error);
+    }
+  }, [isError, error]);
+
+  const filteredData = useMemo(() => {
+    const list: ProductWithBatches[] = data?.results ?? [];
+    return list.filter((product) => {
+      const createdAt = new Date(product.createdAt);
+      const matchStart = !startDate || createdAt >= new Date(startDate);
+      const matchEnd =
+        !endDate ||
+        createdAt <= new Date(new Date(endDate).setHours(23, 59, 59, 999));
+      return matchStart && matchEnd;
+    });
+  }, [data, startDate, endDate]);
+
+  const rowNumberMap = useMemo(
+    () =>
+      new Map(
+        filteredData.map((item, index) => [
+          item,
+          (pageNumber - 1) * PAGE_SIZE + index + 1,
+        ])
+      ),
+    [filteredData, pageNumber]
+  );
+
+  const showDetail = (item: ProductWithBatches) => setDetailItem(item);
+  const handleCloseDetail = () => setDetailItem(null);
+
+  const DropdownWrapper = ({
+    item,
+  }: {
+    item: ProductWithBatches;
+    onRowClick: (e: React.MouseEvent) => void;
+  }) => (
+    <Dropdown
+      item={item}
+      onShowDetail={() => showDetail(item)}
+      onNavigate={() => navigate(`/products/${item.id}`)}
+    />
+  );
+
+  const BackNavigation = () => (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={() => navigate(-1)}
+      className="h-8 w-8 p-0 hover:bg-primary/10 mr-2"
+    >
+      <ArrowLeft className="h-4 w-4" />
+    </Button>
+  );
+
+  const renderPreview = (item: ProductWithBatches) => {
+    const imagePath = item.images?.[0]?.url;
+    if (!imagePath) {
+      return (
+        <div className="flex h-10 w-10 items-center justify-center rounded-md bg-muted text-sm font-medium text-muted-foreground">
+          {item.name.charAt(0)?.toUpperCase() ?? '—'}
+        </div>
+      );
+    }
+
+    const baseUrl = import.meta.env.VITE_BASE_URL?.split('api')[0] ?? '';
+    const imageUrl = `${baseUrl}${imagePath}`;
+
+    return (
+      <div className="h-10 w-10 overflow-hidden rounded-md border border-border/60 bg-background">
+        <img src={imageUrl} alt={item.name} className="h-full w-full object-cover" />
+      </div>
+    );
+  };
+
+  const firstBatch = (item: ProductWithBatches) => item.batches?.[0];
+
+  const columns = [
+    {
+      key: 'order',
+      header: 'No.',
+      icon: <Hash className="h-4 w-4 text-primary" />,
+      width: '72px',
+      render: (item: ProductWithBatches) => (
+        <span className="font-medium text-foreground">
+          {rowNumberMap.get(item) ?? '-'}
+        </span>
+      ),
+    },
+    {
+      key: 'image',
+      header: 'Rasm',
+      icon: <ImageIcon className="h-4 w-4 text-primary" />,
+      render: (item: ProductWithBatches) => renderPreview(item),
+    },
+    {
+      key: 'name' as keyof ProductWithBatches,
+      header: 'Nomi',
+      icon: <Package className="h-4 w-4 text-primary" />,
+      render: (item: ProductWithBatches) => (
+        <div className="flex flex-col">
+          <span className="font-semibold text-foreground">{item.name}</span>
+          <span className="text-xs text-muted-foreground">
+            Partiyalar: {item.batches?.length ?? 0}
+          </span>
+        </div>
+      ),
+    },
+    {
+      key: 'recipe' as keyof ProductWithBatches,
+      header: 'Retsept',
+      icon: <Hash className="h-4 w-4 text-primary" />,
+      render: (item: ProductWithBatches) => firstBatch(item)?.recipe?.name ?? '—',
+    },
+    {
+      key: 'totalBatchAmount' as keyof ProductWithBatches,
+      header: 'Umumiy miqdor',
+      icon: <Box className="h-4 w-4 text-primary" />,
+      render: (item: ProductWithBatches) => (
+        <span className="font-semibold">
+          {item.totalBatchAmount?.toLocaleString('uz-UZ') ?? '—'}
+        </span>
+      ),
+    },
+    {
+      key: 'sellPrice' as keyof ProductWithBatches,
+      header: 'Sotuv narxi',
+      icon: <DollarSign className="h-4 w-4 text-primary" />,
+      render: (item: ProductWithBatches) => {
+        const price = firstBatch(item)?.sellPrice;
+        return price != null ? `${price.toLocaleString('uz-UZ')} so'm` : '-';
+      },
+    },
+    {
+      key: 'cost' as keyof ProductWithBatches,
+      header: 'Tan narxi',
+      icon: <DollarSign className="h-4 w-4 text-primary" />,
+      render: (item: ProductWithBatches) => {
+        const cost = firstBatch(item)?.cost;
+        return cost != null ? `${cost.toLocaleString('uz-UZ')} so'm` : '-';
+      },
+    },
+    {
+      key: 'createdAt' as keyof ProductWithBatches,
+      header: 'Yaratilgan',
+      icon: <Calendar className="h-4 w-4 text-primary" />,
+      render: (item: ProductWithBatches) =>
+        new Date(item.createdAt).toLocaleDateString('uz-UZ'),
+    },
+    {
+      key: 'actions' as const,
+      header: 'Amallar',
+      icon: <Package className="h-4 w-4 text-primary" />,
+    },
+  ];
+
+  return (
+    <>
+      <UniversalPage
+        header={{
+          title: 'Mahsulotlar',
+          description: 'Barcha mahsulotlarni boshqaring va kuzatib boring',
+          search: {
+            value: search || '',
+            placeholder: 'Mahsulotlarni qidirish',
+          },
+          icon: <Package />,
+          actions: (
+            <>
+              <BackNavigation />
+              <AddButtonComponent />
+            </>
+          ),
+        }}
+        filters={{
+          showFilterIcon: true,
+          showFilter,
+          onShowFilterChange: setShowFilter,
+          dateRange: {
+            startDate,
+            endDate,
+            onStartDateChange: setStartDate,
+            onEndDateChange: setEndDate,
+          },
+        }}
+        showBreadcrumb
+      >
+        <UniversalTable<ProductWithBatches>
+          data={filteredData}
+          total_pages={data?.totalPages || 1}
+          isLoading={isFetching}
+          columns={columns}
+          dropdownComponent={DropdownWrapper}
+          emptyTitle="Mahsulot topilmadi"
+          emptyDescription="Qidiruv natijalariga mos keladigan mahsulot mavjud emas. Filtrlarni o'zgartiring yoki boshqa kalit so'zlar bilan qayta urinib ko'ring."
+          emptyIcon={<Package className="h-8 w-8 text-muted-foreground" />}
+          skeletonComponent={SkeletonRow}
+          enableHoverEffect
+          onRowClick={showDetail}
+        />
+      </UniversalPage>
+
+      <ResourceDetailDialog
+        open={detailItem !== null}
+        onClose={handleCloseDetail}
+        item={(detailItem as unknown as Record<string, unknown>) ?? null}
+        title="Mahsulot tafsilotlari"
+        description="Tanlangan mahsulot bo'yicha barcha ma'lumotlar"
+      />
+    </>
+  );
+}
+
+
+
+
+
+

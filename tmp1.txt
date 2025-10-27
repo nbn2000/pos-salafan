@@ -1,0 +1,65 @@
+﻿// src/product/product/services/product-update.service.ts
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { MeasurementType } from 'src/common/enums/enum';
+import { UpdateProductDto } from '../dto/update-product.dto';
+import { ProductView } from '../helper';
+import { ProductBaseService } from './product-base.service';
+
+function mtLabel(t: MeasurementType | undefined) {
+  return t === undefined ? '' : String(t);
+}
+
+@Injectable()
+export class ProductUpdateService extends ProductBaseService {
+  // Facade wires this at runtime: (id: string) => Promise<ProductView>
+  public findOne!: (id: string) => Promise<ProductView>;
+
+  async update(id: string, dto: UpdateProductDto): Promise<ProductView> {
+    const entity = await this.getActiveProductOrThrow(id);
+
+    const logs: string[] = [];
+    const originalMin = Number(entity.minAmount ?? 0);
+
+    // product recipes removed; no recipe validation or type consistency against recipes
+
+    // Mutate + collect change logs (human-friendly, no IDs)
+    if (dto.name !== undefined && dto.name !== entity.name) {
+      logs.push(
+        `Mahsulot nomi Â«${entity.name}Â» â†’ Â«${dto.name}Â» ga oâ€˜zgartirildi.`,
+      );
+      entity.name = dto.name;
+    }
+    if (dto.type !== undefined && dto.type !== entity.type) {
+      logs.push(
+        `Mahsulot turi ${mtLabel(entity.type)} â†’ ${mtLabel(dto.type)} ga oâ€˜zgartirildi.`,
+      );
+      entity.type = dto.type;
+    }
+    if (dto.minAmount !== undefined && Number(dto.minAmount) !== originalMin) {
+      if (dto.minAmount < 0) {
+        throw new BadRequestException("minAmount manfiy bo'lishi mumkin emas");
+      }
+      logs.push(
+        `Minimal zaxira ${originalMin} â†’ ${Number(dto.minAmount)} ga oâ€˜zgartirildi.`,
+      );
+      entity.minAmount = dto.minAmount;
+    }
+
+    await this.productRepo.save(entity);
+
+    // Write one log entry per change (if any)
+    if (logs.length) {
+      await this.logRepo.save(
+        logs.map((comment) =>
+          this.logRepo.create({
+            productId: entity.id,
+            productBatchId: null,
+            comment,
+          }),
+        ),
+      );
+    }
+
+    return this.findOne(entity.id);
+  }
+}
