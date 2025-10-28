@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClsModule } from 'nestjs-cls';
 
 import { AnalyticsModule } from './analytics/analytics.module';
+import { TelegramModule } from './telegram/telegram.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -54,6 +55,7 @@ import { AuditSubscriber } from './common/subscribers/audit.subscriber';
     TransactionModule,
     SaleModule,
     AnalyticsModule,
+    TelegramModule,
   ],
   controllers: [AppController],
   providers: [

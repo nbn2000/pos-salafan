@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { DatePicker } from '@/components/ui/date-picker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -16,14 +15,11 @@ import {
   Hash,
   TrendingUp,
   DollarSign,
-  Clock,
   ChevronDown,
   ChevronUp,
   CheckCircle,
   AlertCircle,
-  X,
-  CalendarDays,
-  CalendarRange
+  X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -57,34 +53,6 @@ interface RecordsFiltersProps {
   isLoading?: boolean;
 }
 
-type TimePeriod = 'weekly' | 'monthly' | 'yearly' | 'custom';
-
-const timePeriodOptions = [
-  { 
-    value: 'weekly' as TimePeriod, 
-    label: 'Bu hafta', 
-    icon: <CalendarDays className="h-4 w-4" />,
-    description: 'Dushanba dan bugun gacha'
-  },
-  { 
-    value: 'monthly' as TimePeriod, 
-    label: 'Bu oy', 
-    icon: <Calendar className="h-4 w-4" />,
-    description: 'Oy boshidan bugun gacha'
-  },
-  { 
-    value: 'yearly' as TimePeriod, 
-    label: 'Bu yil', 
-    icon: <CalendarRange className="h-4 w-4" />,
-    description: 'Yil boshidan bugun gacha'
-  },
-  { 
-    value: 'custom' as TimePeriod, 
-    label: 'Boshqa davr', 
-    icon: <Clock className="h-4 w-4" />,
-    description: 'O\'zingiz tanlang'
-  },
-];
 
 export function RecordsFilters({
   q,
@@ -101,87 +69,8 @@ export function RecordsFilters({
   className,
   isLoading = false
 }: RecordsFiltersProps) {
-  const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>('custom');
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Calculate time periods
-  const getTimePeriodDates = (period: TimePeriod): { from: string; to: string } | null => {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
-    switch (period) {
-      case 'weekly': {
-        // Get Monday of current week
-        const dayOfWeek = today.getDay();
-        const monday = new Date(today);
-        monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
-        
-        return {
-          from: monday.toISOString().split('T')[0],
-          to: today.toISOString().split('T')[0]
-        };
-      }
-      case 'monthly': {
-        // Get first day of current month
-        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-        
-        return {
-          from: firstDay.toISOString().split('T')[0],
-          to: today.toISOString().split('T')[0]
-        };
-      }
-      case 'yearly': {
-        // Get first day of current year
-        const firstDay = new Date(today.getFullYear(), 0, 1);
-        
-        return {
-          from: firstDay.toISOString().split('T')[0],
-          to: today.toISOString().split('T')[0]
-        };
-      }
-      default:
-        return null;
-    }
-  };
-
-  // Detect current time period based on dates
-  useEffect(() => {
-    if (!createdFrom || !createdTo) {
-      setSelectedTimePeriod('custom');
-      return;
-    }
-
-    const weeklyDates = getTimePeriodDates('weekly');
-    const monthlyDates = getTimePeriodDates('monthly');
-    const yearlyDates = getTimePeriodDates('yearly');
-
-    if (weeklyDates && createdFrom === weeklyDates.from && createdTo === weeklyDates.to) {
-      setSelectedTimePeriod('weekly');
-    } else if (monthlyDates && createdFrom === monthlyDates.from && createdTo === monthlyDates.to) {
-      setSelectedTimePeriod('monthly');
-    } else if (yearlyDates && createdFrom === yearlyDates.from && createdTo === yearlyDates.to) {
-      setSelectedTimePeriod('yearly');
-    } else {
-      setSelectedTimePeriod('custom');
-    }
-  }, [createdFrom, createdTo]);
-
-  const handleTimePeriodChange = (period: TimePeriod) => {
-    setSelectedTimePeriod(period);
-    
-    if (period === 'custom') {
-      // Don't change dates, let user set them manually
-      return;
-    }
-    
-    const dates = getTimePeriodDates(period);
-    if (dates) {
-      onFiltersChange({
-        createdFrom: dates.from,
-        createdTo: dates.to
-      });
-    }
-  };
 
   const hasActiveFilters = !!(q || clientId || productId || createdFrom || createdTo);
   const activeFiltersCount = [q, clientId, productId, createdFrom, createdTo].filter(Boolean).length;
@@ -331,79 +220,6 @@ export function RecordsFilters({
                   </p>
                 </div>
 
-                <Separator />
-
-                {/* Time Period Section */}
-                <div className="space-y-4">
-                  <Label className="text-sm font-semibold flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-primary" />
-                    Vaqt davri
-                  </Label>
-                  
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {timePeriodOptions.map((option) => (
-                      <motion.div
-                        key={option.value}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Button
-                          variant={selectedTimePeriod === option.value ? "default" : "outline"}
-                          onClick={() => handleTimePeriodChange(option.value)}
-                          disabled={isLoading}
-                          className={cn(
-                            "w-full h-auto p-3 flex flex-col items-center gap-2 transition-all duration-200",
-                            selectedTimePeriod === option.value && "shadow-md"
-                          )}
-                        >
-                          {option.icon}
-                          <div className="text-center">
-                            <div className="font-medium text-xs">{option.label}</div>
-                            <div className="text-[10px] text-muted-foreground mt-1">
-                              {option.description}
-                            </div>
-                          </div>
-                        </Button>
-                      </motion.div>
-                    ))}
-                  </div>
-
-                  {/* Custom Date Range */}
-                  {selectedTimePeriod === 'custom' && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 p-4 rounded-lg bg-muted/30 border border-border/50"
-                    >
-                      <div className="space-y-2">
-                        <Label className="text-sm font-medium text-muted-foreground">
-                          Boshlanish sanasi
-                        </Label>
-                        <DatePicker
-                          value={createdFrom || null}
-                          onChange={(value) => onFiltersChange({ createdFrom: value || undefined })}
-                          placeholder="Boshlanish sanasini tanlang"
-                          disabled={isLoading}
-                          maxDate={createdTo ? new Date(createdTo) : undefined}
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label className="text-sm font-medium text-muted-foreground">
-                          Tugash sanasi
-                        </Label>
-                        <DatePicker
-                          value={createdTo || null}
-                          onChange={(value) => onFiltersChange({ createdTo: value || undefined })}
-                          placeholder="Tugash sanasini tanlang"
-                          disabled={isLoading}
-                          minDate={createdFrom ? new Date(createdFrom) : undefined}
-                        />
-                      </div>
-                    </motion.div>
-                  )}
-                </div>
 
                 <Separator />
 

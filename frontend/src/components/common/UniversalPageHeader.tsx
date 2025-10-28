@@ -17,6 +17,7 @@ export interface UniversalPageHeaderProps {
     };
     actions?: React.ReactNode;
     showFullscreen?: boolean;
+    additionalControls?: React.ReactNode;
   };
   filters?: UniversalFiltersProps['filters'];
   pageRef: React.RefObject<HTMLDivElement>;
@@ -72,6 +73,11 @@ export const UniversalPageHeader: React.FC<UniversalPageHeaderProps> = ({
                 search={header.search.value}
                 placeholder={header.search.placeholder}
               />
+            </div>
+          )}
+          {header.additionalControls && (
+            <div className="flex-shrink-0">
+              {header.additionalControls}
             </div>
           )}
           {filters?.showFilterIcon && (

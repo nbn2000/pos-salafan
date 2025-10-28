@@ -3,8 +3,10 @@ import { useGetSalesQuery } from '@/api/sales';
 import { UniversalPage } from '@/components/common/UniversalPage';
 import { UniversalTable } from '@/components/common/UniversalTable';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { RecordsFilters } from '@/components/records';
+import { DatePicker } from '@/components/ui/date-picker';
+import { TimePeriodSelector } from '@/components/records';
 import RootLayout from '@/layout';
 import { formatQuantity, date } from '@/lib/utils';
 import {
@@ -21,6 +23,7 @@ import {
   CheckCircle,
   AlertCircle,
   Undo2,
+  X,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
@@ -247,6 +250,10 @@ export default function Records() {
     updateParams(filters);
   };
 
+  const handleDateRangeChange = (dates: { createdFrom?: string; createdTo?: string }) => {
+    updateParams(dates);
+  };
+
   const hasActiveFilters = q || clientId || productId || createdFrom || createdTo;
 
   const columns = [
@@ -435,36 +442,125 @@ export default function Records() {
         header={{
           title: 'Sotuvlar tarixi',
           description:
-            'Har qator — bitta sotuv. Tarkibda mahsulot va homashyo nomlari to‘liq ko‘rsatiladi.',
+            'Har qator — bitta sotuv. Tarkibda mahsulot va homashyo nomlari toliq korsatiladi.',
           search: {
             value: q,
             placeholder: "Mijoz, mahsulot yoki izoh bo'yicha qidirish...",
           },
+          additionalControls: (
+            <TimePeriodSelector
+              createdFrom={createdFrom}
+              createdTo={createdTo}
+              onDateRangeChange={handleDateRangeChange}
+              isLoading={isLoading}
+            />
+          ),
           icon: <DollarSign />,
         }}
         filters={{
           showFilterIcon: true,
           showFilter: showFilters,
           onShowFilterChange: setShowFilters,
+          onClearFilters: clearFilters,
+          sortField: {
+            value: sortBy,
+            onValueChange: (value) => handleFiltersChange({ sortBy: value as 'createdAt' | 'totalSoldPrice' }),
+            placeholder: 'Saralash maydonini tanlang',
+            options: [
+              { id: 'createdAt', label: 'Yaratilgan sana', value: 'createdAt' },
+              { id: 'totalSoldPrice', label: 'Jami narx', value: 'totalSoldPrice' },
+            ],
+          },
+          sortOrder: {
+            value: sortDir,
+            onValueChange: (value) => handleFiltersChange({ sortDir: value as 'ASC' | 'DESC' }),
+            placeholder: 'Saralash tartibini tanlang',
+          },
+          customFilters: (
+            <div className="space-y-6">
+              {/* Custom Date Range Section */}
+              <div className="space-y-4">
+                <div className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-primary" />
+                  Maxsus vaqt oralig'i
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground block">
+                      Boshlanish sanasi
+                    </label>
+                    <DatePicker
+                      value={createdFrom || null}
+                      onChange={(value) => handleDateRangeChange({ createdFrom: value || undefined, createdTo })}
+                      placeholder="Sana tanlang"
+                      disabled={isLoading}
+                      maxDate={createdTo ? new Date(createdTo) : undefined}
+                      className="h-10 w-full text-sm"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground block">
+                      Tugash sanasi
+                    </label>
+                    <DatePicker
+                      value={createdTo || null}
+                      onChange={(value) => handleDateRangeChange({ createdFrom, createdTo: value || undefined })}
+                      placeholder="Sana tanlang"
+                      disabled={isLoading}
+                      minDate={createdFrom ? new Date(createdFrom) : undefined}
+                      className="h-10 w-full text-sm"
+                    />
+                  </div>
+                </div>
+                {(createdFrom || createdTo) && (
+                  <div className="text-xs text-muted-foreground">
+                    Tanlangan: {createdFrom && createdTo
+                      ? `${new Date(createdFrom).toLocaleDateString('uz-UZ')} - ${new Date(createdTo).toLocaleDateString('uz-UZ')}`
+                      : createdFrom
+                      ? `${new Date(createdFrom).toLocaleDateString('uz-UZ')} dan`
+                      : `${new Date(createdTo!).toLocaleDateString('uz-UZ')} gacha`
+                    }
+                  </div>
+                )}
+              </div>
+
+              {/* ID Filters Section */}
+              <div className="space-y-4">
+                <div className="text-sm font-semibold text-foreground">
+                  Aniq ID bo'yicha filtr
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground block">
+                      Mijoz ID
+                    </label>
+                    <input
+                      placeholder="433cadec-7fd6-487a-bfda-b957be6c696c"
+                      value={clientId}
+                      onChange={(e) => handleFiltersChange({ clientId: e.target.value })}
+                      className="w-full px-3 py-2 text-sm border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
+                      disabled={isLoading}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground block">
+                      Mahsulot ID
+                    </label>
+                    <input
+                      placeholder="857f839e-84ca-46d1-bc45-ef1984e137e2"
+                      value={productId}
+                      onChange={(e) => handleFiltersChange({ productId: e.target.value })}
+                      className="w-full px-3 py-2 text-sm border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
+                      disabled={isLoading}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ),
         }}
         showBreadcrumb={true}
       >
-        {/* Enhanced Filters */}
-        <RecordsFilters
-          q={q}
-          clientId={clientId}
-          productId={productId}
-          sortBy={sortBy}
-          sortDir={sortDir}
-          createdFrom={createdFrom}
-          createdTo={createdTo}
-          onFiltersChange={handleFiltersChange}
-          onClearFilters={clearFilters}
-          showFilters={showFilters}
-          onShowFiltersChange={setShowFilters}
-          isLoading={isLoading}
-          className="mb-6"
-        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
           <Card>
