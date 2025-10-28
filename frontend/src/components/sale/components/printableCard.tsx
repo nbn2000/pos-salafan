@@ -777,7 +777,15 @@ export function PrintableCard({
         )}
       </CardFooter>
 
-      <AddDebtorDialog open={addOpen} onClose={() => setAddOpen(false)} />
+      <AddDebtorDialog 
+        open={addOpen} 
+        onClose={() => setAddOpen(false)}
+        onClientCreated={(client) => {
+          // Auto-select the created client
+          setDebtors(client.id);
+          setAddOpen(false);
+        }}
+      />
     </Card>
   );
 };

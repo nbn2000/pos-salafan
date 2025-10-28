@@ -33,6 +33,8 @@ const logTypeTranslations: Record<RawMaterialLogType, string> = {
   'CHANGE_BATCH': 'Partiya o\'zgartirildi',
   'DELETE': 'O\'chirildi',
   'DELETE_BATCH': 'Partiya o\'chirildi',
+  'DELETE-BATCH': 'Partiya o\'chirildi',
+  'CHANGE-BATCH': 'Partiya o\'zgartirildi',
 };
 
 // Log type icons and styling
@@ -43,9 +45,11 @@ const getLogTypeIcon = (logType: RawMaterialLogType) => {
       return <Plus className="h-3 w-3" />;
     case 'CHANGE':
     case 'CHANGE_BATCH':
+    case 'CHANGE-BATCH':
       return <ArrowRightLeft className="h-3 w-3" />;
     case 'DELETE':
     case 'DELETE_BATCH':
+    case 'DELETE-BATCH':
       return <Minus className="h-3 w-3" />;
     default:
       return <Tag className="h-3 w-3" />;
@@ -54,8 +58,8 @@ const getLogTypeIcon = (logType: RawMaterialLogType) => {
 
 const getLogTypeBadge = (logType: RawMaterialLogType) => {
   const isAdd = logType === 'ADD' || logType === 'ADD_BATCH';
-  const isChange = logType === 'CHANGE' || logType === 'CHANGE_BATCH';
-  const isDelete = logType === 'DELETE' || logType === 'DELETE_BATCH';
+  const isChange = logType === 'CHANGE' || logType === 'CHANGE_BATCH' || logType === 'CHANGE-BATCH';
+  const isDelete = logType === 'DELETE' || logType === 'DELETE_BATCH' || logType === 'DELETE-BATCH';
 
   return (
     <Badge
@@ -261,8 +265,10 @@ export default function RawMaterialLogsTable() {
                 <option value="ADD_BATCH">{logTypeTranslations.ADD_BATCH}</option>
                 <option value="CHANGE">{logTypeTranslations.CHANGE}</option>
                 <option value="CHANGE_BATCH">{logTypeTranslations.CHANGE_BATCH}</option>
+                <option value="CHANGE-BATCH">{logTypeTranslations['CHANGE-BATCH']}</option>
                 <option value="DELETE">{logTypeTranslations.DELETE}</option>
                 <option value="DELETE_BATCH">{logTypeTranslations.DELETE_BATCH}</option>
+                <option value="DELETE-BATCH">{logTypeTranslations['DELETE-BATCH']}</option>
               </select>
             </div>
           ),

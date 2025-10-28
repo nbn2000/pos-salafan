@@ -69,7 +69,14 @@ export class SupplierFinanceAllService extends SupplierFinanceBaseService {
     );
 
     if (!allLogIds.length) {
-      return { ...page, results: [] };
+      // No finance logs for any supplier on this page.
+      // Return zeroed rows for each supplier to keep pagination consistent.
+      const zeroRows: SupplierFinanceRow[] = suppliers.map((s) => ({
+        supplier: { id: s.id, name: s.name, phone: s.phone },
+        credit: 0,
+        items: [],
+      }));
+      return { ...page, results: zeroRows };
     }
 
     const { logs, logById } = await this.loadLogsWithRelations(allLogIds);
@@ -184,6 +191,7 @@ export class SupplierFinanceAllService extends SupplierFinanceBaseService {
               createdAt: p.createdAt,
               amount: Number(p.amount),
               paymentType: p.paymentType,
+              comment: p.comment ?? '',
             }));
 
           materialCredit += currentCredit;

@@ -12,6 +12,8 @@ export interface RawMaterialLogResult {
   updatedAt: Date;
   rawMaterialId: string;
   rawMaterialName: string;
+  rawMaterialIsActive: boolean;
+  rawMaterialDeletedAt?: Date | null;
   rawMaterialBatchId: string;
   amount: number;
   comment: string;
@@ -99,10 +101,12 @@ export function toLogResult(entity: RawMaterialLog): RawMaterialLogResult {
     updatedAt: entity.updatedAt,
     rawMaterialId: entity.rawMaterialId,
     rawMaterialName: entity.rawMaterial?.name ?? '',
+    rawMaterialIsActive: entity.rawMaterial?.isActive ?? false,
+    rawMaterialDeletedAt: entity.rawMaterial?.deletedAt ?? null,
     rawMaterialBatchId: entity.rawMaterialBatchId,
     amount: Number(entity.rawMaterialBatch?.amount ?? 0),
     comment: entity.comment,
-    type: entity.type as RawMaterialLogType,
+    type: entity.type,
   };
 }
 
@@ -119,6 +123,6 @@ export function toLogNested(entity: RawMaterialLog): RawMaterialLogNestedResult 
     rawMaterialBatch: toRawMaterialBatchView(entity.rawMaterialBatch ?? null),
     amount: Number(entity.rawMaterialBatch?.amount ?? 0),
     comment: entity.comment,
-    type: entity.type as RawMaterialLogType,
+    type: entity.type,
   };
 }

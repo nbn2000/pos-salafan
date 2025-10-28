@@ -18,6 +18,9 @@ declare interface SupplierFinanceRow {
   items: SupplierMaterialFinanceItem[];
 }
 
+// ==== Paginated finance response ====
+declare type SuppliersFinancePaged = PaginationResult<SupplierFinanceRow>;
+
 declare interface SupplierMaterialFinanceItem {
   material: {
     id: UUID;
@@ -43,6 +46,7 @@ declare interface SupplierBatchFinanceView {
   creditStatic: number; // initial debt at purchase time
   paid: number; // variable total paid to date
   paidStatic: number; // paid at purchase time
+  payments: SupplierPaymentView[];
   logs: SupplierLogView[];
 }
 
@@ -50,6 +54,14 @@ declare interface SupplierLogView {
   id: UUID;
   createdAt: ISODateString;
   comment?: string | null;
+}
+
+declare interface SupplierPaymentView {
+  id: UUID;
+  createdAt: ISODateString;
+  amount: number;
+  paymentType: PaymentType;
+  comment: string;
 }
 
 // ==== Create / Update payload ====

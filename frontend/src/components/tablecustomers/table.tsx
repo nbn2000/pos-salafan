@@ -10,6 +10,7 @@ import {
   Phone,
   User,
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { UniversalPage } from '../common/UniversalPage';
@@ -96,17 +97,34 @@ export default function TableCustomer() {
     {
       key: 'index' as keyof Client,
       header: 'ID',
-      icon: <Hash className="h-4 w-4 text-primary" />,
+      icon: <Hash className="h-4 w-4 text-primary text-left" />,
     },
     {
       key: 'name' as keyof Client,
       header: "To'liq ism",
-      icon: <User className="h-4 w-4 text-primary" />,
+      icon: <User className="h-4 w-4 text-primary text-left" />,
       render: (client: Client) => (
-        <div className="flex flex-col">
-          <span className="font-medium">{client.name}</span>
-          {client.phone && (
-            <span className="text-xs text-muted-foreground">{client.phone}</span>
+        <span className="font-medium text-left">{client.name}</span>
+      ),
+    },
+    {
+      key: 'phone' as keyof Client,
+      header: 'Telefon raqam',
+      icon: <Phone className="h-4 w-4 text-primary text-left" />,
+      width: '140px',
+      render: (client: Client) => (
+        <div className="flex justify-left">
+          {client.phone ? (
+            <Badge
+              variant="outline"
+              className="bg-blue-50 text-blue-700 border-blue-200"
+            >
+              {client.phone}
+            </Badge>
+          ) : (
+            <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+              Telefon yo'q
+            </Badge>
           )}
         </div>
       ),
@@ -114,17 +132,27 @@ export default function TableCustomer() {
     {
       key: 'debt' as any,
       header: 'Qarz',
-      icon: <DollarSign className="h-4 w-4 text-primary" />,
+      icon: <DollarSign className="h-4 w-4 text-primary text-left" />,
+      width: '150px',
+      headerAlign: 'left' as const,
       render: (client: Client) => {
         const debt = debtMap.get(client.id) || 0;
         return (
-          <div className="flex flex-col items-end">
+          <div className="flex justify-left">
             {debt > 0 ? (
-              <span className="font-semibold text-sm text-red-600">
+              <Badge
+                variant="destructive"
+                className="bg-red-100 text-red-800 border-red-200 font-semibold"
+              >
                 {debt.toLocaleString('uz-UZ')} so'm
-              </span>
+              </Badge>
             ) : (
-              <span className="text-xs text-muted-foreground">Qarz yo'q</span>
+              <Badge
+                variant="secondary"
+                className="bg-green-100 text-green-800 border-green-200"
+              >
+                Qarz yo'q
+              </Badge>
             )}
           </div>
         );
@@ -133,17 +161,21 @@ export default function TableCustomer() {
     {
       key: 'createdAt' as keyof Client,
       header: 'Sana',
-      icon: <Calendar className="h-4 w-4 text-primary" />,
+      icon: <Calendar className="h-4 w-4 text-primary text-left" />,
+      width: '120px',
+      headerAlign: 'left' as const,
       render: (client: Client) => (
-        <span className="text-sm">
-          {new Date(client.createdAt).toLocaleDateString('uz-UZ')}
-        </span>
+        <div className="flex justify-left">
+          <span className="text-sm">
+            {new Date(client.createdAt).toLocaleDateString('uz-UZ')}
+          </span>
+        </div>
       ),
     },
     {
       key: 'actions',
       header: 'Amallar',
-      icon: <MoreHorizontal className="h-4 w-4 text-primary" />,
+      icon: <MoreHorizontal className="h-4 w-4 text-primary text-left" />,
     },
   ];
 
@@ -151,7 +183,7 @@ export default function TableCustomer() {
     <UniversalPage
       header={{
         title: 'Mijozlar',
-        description: 'Mijozlar ro\'yxati va ularning qarzlari',
+        description: "Mijozlar ro'yxati va ularning qarzlari",
         search: {
           value: search || '',
           placeholder: 'Mijozlarni qidirish',

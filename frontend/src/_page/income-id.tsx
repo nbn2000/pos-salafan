@@ -27,6 +27,7 @@ import {
   User,
   Undo2,
   AlertTriangle,
+  MessageSquare,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
@@ -452,6 +453,25 @@ export default function RecordDetail() {
             )}
           </CardContent>
         </Card>
+
+        {/* Izoh */}
+        {sale?.comment && (
+          <Card className="mb-6">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <MessageSquare className="h-4 w-4 text-primary" />
+                Izoh
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm">
+              <div className="bg-muted/30 rounded-lg p-3 border-l-4 border-primary/30">
+                <p className="text-foreground leading-relaxed">
+                  {sale.comment}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Mahsulotlar jadvali */}
         <Card className="mb-6">

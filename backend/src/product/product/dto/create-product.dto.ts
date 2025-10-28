@@ -1,5 +1,15 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min, ValidateIf } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  Min,
+  ValidateIf,
+} from 'class-validator';
 import { MeasurementType, Priority } from 'src/common/enums/enum';
 
 export class CreateProductDto {
@@ -8,17 +18,21 @@ export class CreateProductDto {
   @IsNotEmpty()
   name: string;
 
-  // recipe/assembler removed
-
   @ApiProperty({ example: 1, description: 'How many products to produce' })
   @IsNumber()
   @IsPositive()
+  @Type(() => Number)
   amount: number;
 
-  @ApiPropertyOptional({ example: 50000, nullable: true, description: 'Per-unit cost for initial batch' })
+  @ApiPropertyOptional({
+    example: 50000,
+    nullable: true,
+    description: 'Per-unit cost for initial batch',
+  })
   @IsOptional()
   @IsNumber()
   @Min(0)
+  @Type(() => Number)
   cost?: number | null;
 
   @ApiProperty({ enum: MeasurementType, example: MeasurementType.KG })
@@ -38,7 +52,6 @@ export class CreateProductDto {
   )
   @IsNumber()
   @Min(0)
+  @Type(() => Number)
   sellPrice?: number | null;
-
-  // Images are still handled via multipart upload in the controller
 }

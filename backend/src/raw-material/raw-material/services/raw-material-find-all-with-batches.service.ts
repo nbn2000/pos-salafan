@@ -4,15 +4,12 @@ import { paginateAndFilter } from 'src/common/utils/pagination.util';
 import { FindOptionsWhere, In } from 'typeorm';
 import { RawMaterialBatch } from '../../raw-material-batch/entities/raw-material-batch.entity';
 import {
-  RawWithBatchesPagedResult,
   RawWithBatchesPagedWithTotals,
   RawMaterialBatchView,
   RawMaterialBatchPaymentView,
   toBatchView,
   toRawMaterialResult,
 } from '../helper';
-import { Payment } from 'src/financial/payment/entities/payment.entity';
-import { Debt } from 'src/financial/debt/entities/debt.entity';
 import { RawMaterialQueryDto } from '../dto/raw-material-query.dto';
 import { RawMaterial } from '../entities/raw-material.entity';
 import { RawMaterialBaseService } from './raw-material-base.service';
@@ -90,8 +87,8 @@ export class RawMaterialFindAllWithBatchesService extends RawMaterialBaseService
 
     // Preload supplier names
     const supplierIds = new Set<string>();
-    for (const [logId, sup] of supplierByLogDebtFrom.entries()) supplierIds.add(sup);
-    for (const [logId, sup] of supplierByLogPayTo.entries()) supplierIds.add(sup);
+    for (const sup of supplierByLogDebtFrom.values()) supplierIds.add(sup);
+    for (const sup of supplierByLogPayTo.values()) supplierIds.add(sup);
     const supplierNameById = new Map<string, string>();
     if (supplierIds.size) {
       const suppliers = await this.supplierRepo.find({ where: { id: In(Array.from(supplierIds)) }, withDeleted: true });
@@ -101,7 +98,7 @@ export class RawMaterialFindAllWithBatchesService extends RawMaterialBaseService
     const joined = pageData.results.map((rm) => {
       const items = batchesByRaw.get(rm.id) ?? [];
       const views: RawMaterialBatchView[] = items.map((b) => {
-        const v = toBatchView(b) as RawMaterialBatchView;
+        const v = toBatchView(b);
         const lgIds = logsByBatch.get(b.id) ?? [];
 
         let paid = 0;

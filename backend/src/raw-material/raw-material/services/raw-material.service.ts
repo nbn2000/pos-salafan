@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { PaginationQueryDto } from 'src/common/dtos/pagination-query.dto';
-import { PaginationResult } from 'src/common/utils/pagination.util';
 
 import { Debt } from 'src/financial/debt/entities/debt.entity';
 import { Payment } from 'src/financial/payment/entities/payment.entity';

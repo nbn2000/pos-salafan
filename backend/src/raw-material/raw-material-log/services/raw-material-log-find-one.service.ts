@@ -8,12 +8,13 @@ export class RawMaterialLogFindOneService extends RawMaterialLogBaseService {
   async findOne(id: string): Promise<RawMaterialLogResult> {
     const entity = await this.repo.findOne({
       where: { id, isActive: true },
-      relations: ['rawMaterial', 'rawMaterialBatch'],
+      withDeleted: true,
     });
     if (!entity)
       throw new (await import('@nestjs/common')).NotFoundException(
         'Xomashyo logi topilmadi',
       );
-    return toLogResult(entity);
+    const map = await this.hydrateWithRelations([entity.id]);
+    return toLogResult(map.get(entity.id) ?? entity);
   }
 }

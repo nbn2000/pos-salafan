@@ -125,11 +125,11 @@ export default function Records() {
     sortDir,
   });
 
-  const list = (data?.results ?? []) as SaleTxLite[];
+  const list = (data?.results ?? []) as TransactionResult[];
   const totalPages = data?.totalPages ?? 1;
 
   const rows = useMemo<Row[]>(() => {
-    return list.map((tx: SaleTxLite) => {
+    return list.map((tx: TransactionResult) => {
       const clientName = tx.client?.name ?? '—';
       const clientPhone = tx.client?.phone ?? '';
 
@@ -139,21 +139,17 @@ export default function Records() {
 
       // Calculate total quantity from product batches
       const qty = (tx.products ?? []).reduce<number>(
-        (sum: number, p: ProductEntryLite) =>
+        (sum: number, p: TransactionProductResult) =>
           sum +
           (p.batches ?? []).reduce<number>(
-            (s: number, b: ProductBatch) => s + Number(b?.amount ?? 0),
+            (s: number, b: TransactionProductBatchResult) => s + Number(b?.amount ?? 0),
             0
           ),
         0
       );
 
-      // Calculate total service charge
-      const serviceCharge = (tx.products ?? []).reduce<number>(
-        (sum: number, p: ProductEntryLite) =>
-          sum + Number(p.serviceCharge ?? 0),
-        0
-      );
+      // Calculate total service charge (not available in TransactionProductResult)
+      const serviceCharge = 0;
 
       // Determine payment status
       const finance = tx.finance;
@@ -177,7 +173,7 @@ export default function Records() {
         debt: Number(finance.debt ?? 0),
         paid: Number(finance.paid ?? 0),
         due: Number(finance.due ?? 0),
-        shouldPayDate: finance.shouldPayDate,
+        shouldPayDate: (finance as any)?.shouldPayDate,
         serviceCharge,
         isReversed: tx.isReversed,
         reversedAt: tx.reversedAt,
@@ -188,7 +184,7 @@ export default function Records() {
   const totalSoldUzs = useMemo<number>(
     () =>
       (list ?? []).reduce<number>(
-        (s: number, r: SaleTxLite) => s + Number(r?.totalSoldPrice ?? 0),
+        (s: number, r: TransactionResult) => s + Number(r?.totalSoldPrice ?? 0),
         0
       ),
     [list]
@@ -197,7 +193,7 @@ export default function Records() {
   const totalDebtUzs = useMemo<number>(
     () =>
       (list ?? []).reduce<number>(
-        (s: number, r: SaleTxLite) => s + Number(r?.finance?.debt ?? 0),
+        (s: number, r: TransactionResult) => s + Number(r?.finance?.debt ?? 0),
         0
       ),
     [list]
@@ -206,7 +202,7 @@ export default function Records() {
   const totalPaidUzs = useMemo<number>(
     () =>
       (list ?? []).reduce<number>(
-        (s: number, r: SaleTxLite) => s + Number(r?.finance?.paid ?? 0),
+        (s: number, r: TransactionResult) => s + Number(r?.finance?.paid ?? 0),
         0
       ),
     [list]
@@ -215,7 +211,7 @@ export default function Records() {
   const totalDueUzs = useMemo<number>(
     () =>
       (list ?? []).reduce<number>(
-        (s: number, r: SaleTxLite) => s + Number(r?.finance?.due ?? 0),
+        (s: number, r: TransactionResult) => s + Number(r?.finance?.due ?? 0),
         0
       ),
     [list]

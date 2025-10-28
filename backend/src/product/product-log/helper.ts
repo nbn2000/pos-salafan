@@ -11,6 +11,8 @@ export interface ProductLogResult {
   updatedAt: Date;
   productId: string;
   productName: string;
+  productIsActive: boolean;
+  productDeletedAt?: Date | null;
   productBatchId: string | null;
   amount: number;
   comment: string;
@@ -83,10 +85,12 @@ export function toLogResult(entity: ProductLog): ProductLogResult {
     updatedAt: entity.updatedAt,
     productId: entity.productId,
     productName: entity.product?.name ?? '',
+    productIsActive: entity.product?.isActive ?? false,
+    productDeletedAt: entity.product?.deletedAt ?? null,
     productBatchId: entity.productBatchId ?? null,
     amount: Number(entity.productBatch?.amount ?? 0),
     comment: entity.comment,
-    type: entity.type as ProductLogType,
+    type: entity.type,
   };
 }
 
@@ -99,13 +103,14 @@ export function toLogNested(entity: ProductLog): ProductLogNestedResult {
     productBatch: toProductBatchView(entity.productBatch ?? null),
     amount: Number(entity.productBatch?.amount ?? 0),
     comment: entity.comment,
-    type: entity.type as ProductLogType,
+    type: entity.type,
   };
 }
 
 // Re-export numeric transformer used by ProductBatch entity
 export const numericTransformer: ValueTransformer = {
-  to: (value: number | null | undefined) => value,
-  from: (value: string | number | null) =>
-    value == null ? (null as any) : Number(value),
+  to: (value: number | null | undefined): number | null =>
+    value == null ? null : value,
+  from: (value: string | number | null): number | null =>
+    value == null ? null : Number(value),
 };

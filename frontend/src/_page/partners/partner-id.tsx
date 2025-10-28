@@ -29,7 +29,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useLazyGetUserDataQuery } from '@/api/auth';
+import { useUserData } from '@/hooks/useUserData';
 import { useGetPartnersFinanceQuery } from '@/api/partners';
 import { DialogPayment } from '@/components/tablecustomers/components/DialogDebt';
 import { useAppSelector } from '@/store/hooks';
@@ -46,6 +46,7 @@ type SupplierFinancePayment = {
   createdAt: string;
   amount: number;
   paymentType: 'CASH' | 'CARD' | 'TRANSFER';
+  comment?: string;
 };
 
 type SupplierFinanceBatch = {
@@ -107,11 +108,7 @@ export default function SupplierDetailPage() {
     isError: boolean;
   };
 
-  const [userTrigger, { data: userData }] = useLazyGetUserDataQuery();
-  const token = useAppSelector((s) => s.auth.token);
-  useEffect(() => {
-    if (token) userTrigger();
-  }, [token, userTrigger]);
+  const { userData } = useUserData();
   const userId = userData?.user?.id || '';
 
 
@@ -533,6 +530,12 @@ export default function SupplierDetailPage() {
                               <div className="text-xs text-muted-foreground mt-1">
                                 Batch: {batch.rawMaterialName}
                               </div>
+                              {payment.comment && (
+                                <div className="text-xs text-muted-foreground mt-2 p-2 bg-blue-50 dark:bg-blue-950/20 rounded border-l-2 border-blue-400">
+                                  <span className="font-medium text-blue-700 dark:text-blue-300">💬 Izoh:</span>
+                                  <div className="italic mt-1">"{payment.comment}"</div>
+                                </div>
+                              )}
                             </div>
                           ))
                         )}

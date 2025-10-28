@@ -3,21 +3,12 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { BentoGrid, BentoGridItem } from '../ui/bento-grid';
 
-import { useLazyGetUserDataQuery } from '@/api/auth';
-import { useAppSelector } from '@/store/hooks';
-import { useEffect } from 'react';
+import { useUserData } from '@/hooks/useUserData';
 import { StockStatusCard } from '../card/analytic';
 import { KPIDashboard } from '../dashboard/KPIDashboard';
 
 export function BentoGridHome() {
-  const token = useAppSelector((state) => state.auth.token);
-  const [userTrigger, { data: userData }] = useLazyGetUserDataQuery();
-
-  useEffect(() => {
-    if (token) {
-      userTrigger();
-    }
-  }, [token, userTrigger]);
+  const { userData } = useUserData();
 
   // Filter items based on user role
   const filteredItems = items.filter((item, index) => {

@@ -8,6 +8,7 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IUserUpdate } from '@/api/auth/type';
 import { useUpdateUserMutation } from '@/api/auth';
+import { useUserData } from '@/hooks/useUserData';
 import {
   User,
   Save,
@@ -29,6 +30,7 @@ export default function UpdateProfile({
   user_role?: string;
 }) {
   const [updateUser, { isLoading }] = useUpdateUserMutation();
+  const { refreshUserData } = useUserData();
 
   type FormValues = {
     username: string;
@@ -68,6 +70,8 @@ export default function UpdateProfile({
         .then((res) => {
           if (res) {
             toast.success('Profil muvaffaqiyatli yangilandi!');
+            // Refresh cached user data after successful update
+            refreshUserData();
           }
         });
     } catch (error: any) {

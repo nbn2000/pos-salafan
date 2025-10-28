@@ -1,4 +1,4 @@
-import { useLazyGetUserDataQuery } from '@/api/auth';
+import { useUserData } from '@/hooks/useUserData';
 import UpdateProfile from '@/components/setting/components/UpdateProfile';
 import {
   Card,
@@ -13,15 +13,8 @@ import { DollarSign, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export function Profile() {
-  const [userTrigger, { data, isLoading }] = useLazyGetUserDataQuery();
-  const token = useAppSelector((state) => state.auth.token);
+  const { userData: data, isLoading } = useUserData();
   const [activeTab, setActiveTab] = useState('profile');
-
-  useEffect(() => {
-    if (token) {
-      userTrigger();
-    }
-  }, [token]);
 
   if (isLoading || !data) {
     return (

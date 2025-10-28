@@ -1,10 +1,7 @@
 ﻿// src/raw-material/raw-material/services/raw-material-find-all.service.ts
 import { Injectable } from '@nestjs/common';
-import {
-  paginateAndFilter,
-  PaginationResult,
-} from 'src/common/utils/pagination.util';
-import { RawMaterialPagedWithTotals, RawMaterialResult, toRawMaterialResult } from '../helper';
+import { paginateAndFilter } from 'src/common/utils/pagination.util';
+import { RawMaterialPagedWithTotals, toRawMaterialResult } from '../helper';
 import { RawMaterialQueryDto } from '../dto/raw-material-query.dto';
 import { FindOptionsWhere } from 'typeorm';
 import { RawMaterial } from '../entities/raw-material.entity';

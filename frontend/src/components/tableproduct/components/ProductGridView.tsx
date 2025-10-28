@@ -74,13 +74,13 @@ export function ProductGridView({
           const profitA =
             a.batches?.reduce(
               (sum, batch) =>
-                sum + ((batch.sellPrice || 0) - batch.cost) * batch.amount,
+                sum + ((batch.sellPrice || 0) - (batch.cost || 0)) * batch.amount,
               0
             ) || 0;
           const profitB =
             b.batches?.reduce(
               (sum, batch) =>
-                sum + ((batch.sellPrice || 0) - batch.cost) * batch.amount,
+                sum + ((batch.sellPrice || 0) - (batch.cost || 0)) * batch.amount,
               0
             ) || 0;
           return profitB - profitA;
@@ -248,19 +248,9 @@ export function ProductGridView({
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  {product.images && product.images.length > 0 ? (
-                    <div className="w-12 h-12 rounded-lg overflow-hidden border border-border/50">
-                      <img
-                        src={`${import.meta.env.VITE_BASE_URL?.split('api')[0] ?? ''}${product.images[0].url}`}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <ShoppingCart className="w-6 h-6 text-primary" />
-                    </div>
-                  )}
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <ShoppingCart className="w-6 h-6 text-primary" />
+                  </div>
                   <div>
                     <h3 className="font-medium">{product.name}</h3>
                     <p className="text-sm text-muted-foreground">

@@ -29,8 +29,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useLazyGetUserDataQuery } from '@/api/auth';
-import { useAppSelector } from '@/store/hooks';
+import { useUserData } from '@/hooks/useUserData';
 
 // рџ†• Tabs (shadcn)
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -87,11 +86,7 @@ export default function DebtorDetailPage() {
   });
 
   // --- User info (to'lov dialog uchun) ---
-  const [userTrigger, { data: userData }] = useLazyGetUserDataQuery();
-  const token = useAppSelector((state) => state.auth.token);
-  useEffect(() => {
-    if (token) userTrigger();
-  }, [token, userTrigger]);
+  const { userData } = useUserData();
 
   const userId = userData?.user?.id || '';
   const client = data?.client;

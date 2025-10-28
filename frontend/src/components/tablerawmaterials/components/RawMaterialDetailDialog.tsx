@@ -242,41 +242,126 @@ export function RawMaterialDetailDialog({
                               To'lov ma'lumotlari:
                             </span>
                           </div>
-                          <div className="grid gap-2 md:grid-cols-2">
-                            <div>
-                              <span className="text-xs text-muted-foreground">
-                                To'langan:
-                              </span>
-                              <div className="text-sm font-medium text-green-600">
-                                <NumericFormat
-                                  value={batch.payment.paid}
-                                  displayType="text"
-                                  thousandSeparator=" "
-                                  suffix=" so'm"
-                                />
+                          <div className="grid gap-3">
+                            <div className="grid gap-2 md:grid-cols-2">
+                              <div>
+                                <span className="text-xs text-muted-foreground">
+                                  Joriy to'langan summa:
+                                </span>
+                                <div className="text-sm font-medium text-green-600">
+                                  <NumericFormat
+                                    value={batch.payment.paid}
+                                    displayType="text"
+                                    thousandSeparator=" "
+                                    suffix=" so'm"
+                                  />
+                                </div>
+                              </div>
+                              <div>
+                                <span className="text-xs text-muted-foreground">
+                                  Joriy qarz:
+                                </span>
+                                <div className="text-sm font-medium text-red-600">
+                                  <NumericFormat
+                                    value={batch.payment.credit}
+                                    displayType="text"
+                                    thousandSeparator=" "
+                                    suffix=" so'm"
+                                  />
+                                </div>
                               </div>
                             </div>
-                            <div>
-                              <span className="text-xs text-muted-foreground">
-                                Qarz:
-                              </span>
-                              <div className="text-sm font-medium text-red-600">
-                                <NumericFormat
-                                  value={batch.payment.credit}
-                                  displayType="text"
-                                  thousandSeparator=" "
-                                  suffix=" so'm"
-                                />
+                            <div className="grid gap-2 md:grid-cols-2 pt-2 border-t border-border/30">
+                              <div>
+                                <span className="text-xs text-muted-foreground">
+                                  Dastlabki to'lov (sotib olish vaqtida):
+                                </span>
+                                <div className="text-sm font-medium text-blue-600">
+                                  <NumericFormat
+                                    value={batch.payment.paidStatic}
+                                    displayType="text"
+                                    thousandSeparator=" "
+                                    suffix=" so'm"
+                                  />
+                                </div>
+                              </div>
+                              <div>
+                                <span className="text-xs text-muted-foreground">
+                                  Dastlabki qarz (sotib olish vaqtida):
+                                </span>
+                                <div className="text-sm font-medium text-orange-600">
+                                  <NumericFormat
+                                    value={batch.payment.creditStatic}
+                                    displayType="text"
+                                    thousandSeparator=" "
+                                    suffix=" so'm"
+                                  />
+                                </div>
                               </div>
                             </div>
                           </div>
-                          <div className="mt-1">
+                          <div className="mt-2 flex flex-col gap-2">
                             <Badge 
-                              variant={batch.payment.credit === 0 ? 'default' : 'destructive'}
-                              className="text-xs"
+                              variant={
+                                batch.payment.credit === 0 
+                                  ? 'default' 
+                                  : batch.payment.paid === 0 
+                                    ? 'destructive' 
+                                    : 'secondary'
+                              }
+                              className="text-xs w-fit"
                             >
-                              {batch.payment.credit === 0 ? "To'liq to'langan" : "Qisman to'langan"}
+                              {batch.payment.credit === 0 
+                                ? "To'liq to'langan" 
+                                : batch.payment.paid === 0 
+                                  ? "Hali to'lanmagan" 
+                                  : "Qisman to'langan"}
                             </Badge>
+                            
+                            {/* Payment Comments */}
+                            {batch.payments && batch.payments.length > 0 && (
+                              <div className="mt-3 pt-2 border-t border-border/30">
+                                <span className="text-xs font-semibold text-muted-foreground mb-2 block">
+                                  💬 To'lov izohlari ({batch.payments.length} ta):
+                                </span>
+                                <div className="space-y-2">
+                                  {batch.payments.map((payment: any, paymentIndex: number) => (
+                                    <div 
+                                      key={payment.id || paymentIndex}
+                                      className="text-xs bg-blue-50 dark:bg-blue-950/20 rounded-md px-3 py-2 border-l-4 border-blue-500"
+                                    >
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className="font-semibold text-green-600">
+                                          {Number(payment.amount).toLocaleString('uz-UZ')} so'm
+                                        </span>
+                                        <span className="text-muted-foreground">•</span>
+                                        <span className="text-muted-foreground font-medium">
+                                          {payment.paymentType || 'CASH'}
+                                        </span>
+                                        {payment.createdAt && (
+                                          <>
+                                            <span className="text-muted-foreground">•</span>
+                                            <span className="text-muted-foreground text-xs">
+                                              {new Date(payment.createdAt).toLocaleDateString('uz-UZ')}
+                                            </span>
+                                          </>
+                                        )}
+                                      </div>
+                                      {payment.comment && (
+                                        <div className="text-muted-foreground italic bg-white/50 dark:bg-black/20 rounded px-2 py-1 mt-1">
+                                          💭 "{payment.comment}"
+                                        </div>
+                                      )}
+                                      {!payment.comment && (
+                                        <div className="text-muted-foreground text-xs">
+                                          Izoh yo'q
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       )}

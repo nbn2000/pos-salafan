@@ -240,7 +240,8 @@ export function RawMaterialBatchDetailDialog({
                   To'lov ma'lumotlari
                 </h4>
                 <div className="rounded-md border border-border/40 bg-muted/10 px-4 py-3">
-                  <div className="grid gap-3 md:grid-cols-2">
+                  <div className="grid gap-4">
+                    {/* Supplier Info */}
                     <div>
                       <span className="text-xs text-muted-foreground">
                         Yetkazib beruvchi
@@ -250,75 +251,146 @@ export function RawMaterialBatchDetailDialog({
                       </div>
                     </div>
                     
+                    {/* Current Payment Status */}
                     <div>
-                      <span className="text-xs text-muted-foreground">
-                        To'langan summa
-                      </span>
-                      <div className="text-sm font-semibold text-green-600 mt-1">
-                        <NumericFormat
-                          value={item.payment.paid}
-                          displayType="text"
-                          thousandSeparator=" "
-                          suffix=" so'm"
-                        />
+                      <h5 className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+                        <Wallet className="h-3 w-3" />
+                        Joriy holat
+                      </h5>
+                      <div className="grid gap-2 md:grid-cols-2">
+                        <div>
+                          <span className="text-xs text-muted-foreground">
+                            Joriy to'langan summa
+                          </span>
+                          <div className="text-sm font-semibold text-green-600 mt-1">
+                            <NumericFormat
+                              value={item.payment.paid}
+                              displayType="text"
+                              thousandSeparator=" "
+                              suffix=" so'm"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <span className="text-xs text-muted-foreground">
+                            Joriy qarz
+                          </span>
+                          <div className="text-sm font-semibold text-red-600 mt-1">
+                            <NumericFormat
+                              value={item.payment.credit}
+                              displayType="text"
+                              thousandSeparator=" "
+                              suffix=" so'm"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
 
-                    <div>
-                      <span className="text-xs text-muted-foreground">
-                        Dastlabki to'lov
-                      </span>
-                      <div className="text-sm font-medium mt-1">
-                        <NumericFormat
-                          value={item.payment.paidStatic}
-                          displayType="text"
-                          thousandSeparator=" "
-                          suffix=" so'm"
-                        />
+                    {/* Original Payment Status */}
+                    <div className="pt-2 border-t border-border/30">
+                      <h5 className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        Sotib olish vaqtidagi dastlabki holat
+                      </h5>
+                      <div className="grid gap-2 md:grid-cols-2">
+                        <div>
+                          <span className="text-xs text-muted-foreground">
+                            Dastlabki to'lov
+                          </span>
+                          <div className="text-sm font-medium text-blue-600 mt-1">
+                            <NumericFormat
+                              value={item.payment.paidStatic}
+                              displayType="text"
+                              thousandSeparator=" "
+                              suffix=" so'm"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <span className="text-xs text-muted-foreground">
+                            Dastlabki qarz
+                          </span>
+                          <div className="text-sm font-medium text-orange-600 mt-1">
+                            <NumericFormat
+                              value={item.payment.creditStatic}
+                              displayType="text"
+                              thousandSeparator=" "
+                              suffix=" so'm"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
 
-                    <div>
-                      <span className="text-xs text-muted-foreground">
-                        Joriy qarz
-                      </span>
-                      <div className="text-sm font-semibold text-red-600 mt-1">
-                        <NumericFormat
-                          value={item.payment.credit}
-                          displayType="text"
-                          thousandSeparator=" "
-                          suffix=" so'm"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <span className="text-xs text-muted-foreground">
-                        Dastlabki qarz
-                      </span>
-                      <div className="text-sm font-medium mt-1">
-                        <NumericFormat
-                          value={item.payment.creditStatic}
-                          displayType="text"
-                          thousandSeparator=" "
-                          suffix=" so'm"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
+                    {/* Payment Status Badge */}
+                    <div className="pt-2 border-t border-border/30">
                       <span className="text-xs text-muted-foreground">
                         To'lov holati
                       </span>
                       <div className="text-sm mt-1">
                         <Badge 
-                          variant={item.payment.credit === 0 ? 'default' : 'destructive'}
-                          className="text-xs"
+                          variant={
+                            item.payment.credit === 0 
+                              ? 'default' 
+                              : item.payment.paid === 0 
+                                ? 'destructive' 
+                                : 'secondary'
+                          }
+                          className="text-xs w-fit"
                         >
-                          {item.payment.credit === 0 ? "To'liq to'langan" : "Qisman to'langan"}
+                          {item.payment.credit === 0 
+                            ? "To'liq to'langan" 
+                            : item.payment.paid === 0 
+                              ? "Hali to'lanmagan" 
+                              : "Qisman to'langan"}
                         </Badge>
                       </div>
                     </div>
+
+                    {/* Payment Comments */}
+                    {item.payments && item.payments.length > 0 && (
+                      <div className="pt-3 border-t border-border/30">
+                        <span className="text-xs font-semibold text-muted-foreground mb-3 block">
+                          💬 To'lov izohlari ({item.payments.length} ta)
+                        </span>
+                        <div className="space-y-3">
+                          {item.payments.map((payment: any, paymentIndex: number) => (
+                            <div 
+                              key={payment.id || paymentIndex}
+                              className="text-sm bg-blue-50 dark:bg-blue-950/20 rounded-lg px-4 py-3 border-l-4 border-blue-500"
+                            >
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-bold text-green-600">
+                                    {Number(payment.amount).toLocaleString('uz-UZ')} so'm
+                                  </span>
+                                  <span className="text-muted-foreground">•</span>
+                                  <span className="text-muted-foreground font-semibold">
+                                    {payment.paymentType || 'CASH'}
+                                  </span>
+                                </div>
+                                {payment.createdAt && (
+                                  <span className="text-muted-foreground text-xs">
+                                    {new Date(payment.createdAt).toLocaleDateString('uz-UZ')}
+                                  </span>
+                                )}
+                              </div>
+                              {payment.comment && (
+                                <div className="text-muted-foreground italic bg-white/70 dark:bg-black/30 rounded-md px-3 py-2 border-l-2 border-blue-300">
+                                  💭 "{payment.comment}"
+                                </div>
+                              )}
+                              {!payment.comment && (
+                                <div className="text-muted-foreground text-sm">
+                                  Izoh qo'shilmagan
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </section>

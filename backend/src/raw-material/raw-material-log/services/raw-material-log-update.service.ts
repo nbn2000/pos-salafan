@@ -29,7 +29,7 @@ export class RawMaterialLogUpdateService extends RawMaterialLogBaseService {
     }
 
     if (dto.comment) entity.comment = dto.comment;
-    if ((dto as any).type) (entity as any).type = (dto as any).type;
+    if (dto.type) entity.type = dto.type;
 
     const saved = await this.repo.save(entity);
     return toLogResult(saved);

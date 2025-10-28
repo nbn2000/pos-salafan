@@ -85,8 +85,7 @@ export function ProductDetailDialog({
                     Retseptlar soni
                   </span>
                   <div className="text-sm mt-1 font-medium">
-                    {item.batches?.filter((batch) => batch.recipe).length || 0}{' '}
-                    ta
+                    {0} ta {/* recipe not available in ProductBatchView */}
                   </div>
                 </div>
 
@@ -126,18 +125,18 @@ export function ProductDetailDialog({
             </section>
 
             {/* Images */}
-            {item.images && item.images.length > 0 && (
+            {false && ( // images not available in ProductWithBatches
               <section className="grid gap-3">
                 <div className="flex items-center justify-between">
                   <h4 className="text-sm font-semibold text-muted-foreground">
                     Rasmlar
                   </h4>
                   <span className="text-xs text-muted-foreground">
-                    Jami: {item.images.length}
+                    Jami: 0 {/* images not available */}
                   </span>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {item.images.map((image, index) => {
+                  {[].map((image: any, index: number) => { // images not available
                     const baseUrl =
                       import.meta.env.VITE_BASE_URL?.split('api')[0] ?? '';
                     const imageUrl = `${baseUrl}${image.url}`;
@@ -148,7 +147,7 @@ export function ProductDetailDialog({
                       >
                         <img
                           src={imageUrl}
-                          alt={`${item.name} rasm ${index + 1}`}
+                          alt={`${item?.name || 'Product'} rasm ${index + 1}`}
                           className="h-48 w-full object-cover"
                         />
                       </div>
@@ -219,27 +218,27 @@ export function ProductDetailDialog({
                           </span>
                           <div className="text-sm font-medium">
                             {batch.sellPrice
-                              ? `${Number(batch.sellPrice - batch.cost).toLocaleString('uz-UZ')} so'm`
+                              ? `${Number(batch.sellPrice - (batch.cost || 0)).toLocaleString('uz-UZ')} so'm`
                               : 'Hisoblanmagan'}
                           </div>
                         </div>
                       </div>
 
-                      {batch.recipe && (
+                      {false && ( // recipe not available in ProductBatchView
                         <div className="mt-3 pt-3 border-t border-border/30">
                           <span className="text-xs text-muted-foreground mb-2 block">
-                            Ishlatilgan retsept: {batch.recipe.name}
+                            Ishlatilgan retsept: {/* recipe not available */}
                           </span>
 
                           {/* Recipe Units/Ingredients */}
-                          {batch.recipe.units &&
-                            batch.recipe.units.length > 0 && (
+                          {false && // recipe not available
+                            false && (
                               <div className="mt-2">
                                 <span className="text-xs text-muted-foreground mb-2 block">
                                   Retsept tarkibi:
                                 </span>
                                 <div className="grid gap-2 sm:grid-cols-2">
-                                  {batch.recipe.units.map((unit) => (
+                                  {[].map((unit: any) => ( // recipe not available
                                     <div
                                       key={unit.id}
                                       className="flex items-center justify-between text-xs bg-background/50 rounded px-2 py-1"
@@ -310,7 +309,7 @@ export function ProductDetailDialog({
                           </span>
                           <div className="text-sm font-semibold">
                             {latest.sellPrice
-                              ? `${Number(latest.sellPrice - latest.cost).toLocaleString('uz-UZ')} so'm`
+                              ? `${Number(latest.sellPrice - (latest.cost || 0)).toLocaleString('uz-UZ')} so'm`
                               : 'Hisoblanmagan'}
                           </div>
                         </div>

@@ -8,6 +8,8 @@ declare interface ProductLogResult {
   updatedAt: ISODateString;
   productId: UUID;
   productName: string;
+  productIsActive: boolean;
+  productDeletedAt?: ISODateString | null;
   productBatchId: UUID | null;
   amount: number;
   comment: string;

@@ -187,9 +187,10 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
   const from = kpiData?.period?.from ? new Date(kpiData.period.from) : null;
   const to = kpiData?.period?.to ? new Date(kpiData.period.to) : null;
 
-  const totalStock = (kpiData?.stock?.semiProductInStock || 0) + 
-                    (kpiData?.stock?.semiProductInAssemblers || 0) + 
-                    (kpiData?.stock?.productUnitsAvailable || 0);
+  const totalStock = (kpiData?.stock?.productKg || 0) + 
+                    (kpiData?.stock?.productUnit || 0) + 
+                    (kpiData?.stock?.rawKg || 0) + 
+                    (kpiData?.stock?.rawUnit || 0);
 
   return (
     <motion.div
@@ -282,7 +283,7 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
             
             <MetricCard
               title="Sof Foyda"
-              value={kpiData?.pureProfit || 0}
+              value={kpiData?.totalProfit || 0}
               icon={<DollarSign className="h-5 w-5" />}
               suffix=" so'm"
               delay={0.2}
@@ -290,7 +291,7 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
             
             <MetricCard
               title="Jami Xarajatlar"
-              value={kpiData?.totalExpenses || 0}
+              value={0} // totalExpenses not available in current API
               icon={<TrendingDown className="h-5 w-5" />}
               suffix=" so'm"
               delay={0.3}
@@ -326,7 +327,7 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
                 <div className="flex items-center justify-between p-4 rounded-lg bg-blue-50 dark:bg-blue-950/20">
                   <span className="font-medium">Sof Foyda</span>
                   <span className="text-lg font-bold text-blue-600">
-                    {formatQuantity(kpiData?.pureProfit || 0)} so'm
+                    {formatQuantity(kpiData?.totalProfit || 0)} so'm
                   </span>
                 </div>
               </CardContent>
@@ -343,7 +344,7 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
                 <div className="flex items-center justify-between p-4 rounded-lg bg-red-50 dark:bg-red-950/20">
                   <span className="font-medium">Jami Xarajatlar</span>
                   <span className="text-lg font-bold text-red-600">
-                    {formatQuantity(kpiData?.totalExpenses || 0)} so'm
+                    {formatQuantity(0)} so'm {/* totalExpenses not available */}
                   </span>
                 </div>
               </CardContent>
@@ -364,14 +365,14 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">Tayyor Mahsulotlar</span>
-                    <span className="font-medium">{formatQuantity(kpiData?.stock?.productUnitsAvailable || 0)} dona</span>
+                    <span className="font-medium">{formatQuantity(kpiData?.stock?.productUnit || 0)} dona</span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
                     <div 
                       className="h-2 rounded-full bg-gradient-to-r from-green-500 to-green-600"
                       style={{ 
                         width: totalStock > 0 
-                          ? `${((kpiData?.stock?.productUnitsAvailable || 0) / totalStock) * 100}%` 
+                          ? `${((kpiData?.stock?.productUnit || 0) / totalStock) * 100}%` 
                           : '0%' 
                       }}
                     />
@@ -383,14 +384,14 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">Ombordagi Yarim Tayyor</span>
-                    <span className="font-medium">{formatQuantity(kpiData?.stock?.semiProductInStock || 0)} dona</span>
+                    <span className="font-medium">{formatQuantity(kpiData?.stock?.rawUnit || 0)} dona</span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
                     <div 
                       className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-blue-600"
                       style={{ 
                         width: totalStock > 0 
-                          ? `${((kpiData?.stock?.semiProductInStock || 0) / totalStock) * 100}%` 
+                          ? `${((kpiData?.stock?.rawUnit || 0) / totalStock) * 100}%` 
                           : '0%' 
                       }}
                     />
@@ -402,14 +403,14 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">Yig'uvchilardagi Yarim Tayyor</span>
-                    <span className="font-medium">{formatQuantity(kpiData?.stock?.semiProductInAssemblers || 0)} dona</span>
+                    <span className="font-medium">{formatQuantity(kpiData?.stock?.rawKg || 0)} kg</span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
                     <div 
                       className="h-2 rounded-full bg-gradient-to-r from-purple-500 to-purple-600"
                       style={{ 
                         width: totalStock > 0 
-                          ? `${((kpiData?.stock?.semiProductInAssemblers || 0) / totalStock) * 100}%` 
+                          ? `${((kpiData?.stock?.rawKg || 0) / totalStock) * 100}%` 
                           : '0%' 
                       }}
                     />

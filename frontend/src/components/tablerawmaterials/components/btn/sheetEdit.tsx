@@ -25,6 +25,7 @@ import { useUpdateRawMaterialsMutation } from '@/api/raw-materials';
 import type {
   MaterialSummary,
   MeasureType,
+  Priority,
 } from '@/interfaces/raw-material/raw-materials';
 
 const EditSchema = z.object({
@@ -32,7 +33,7 @@ const EditSchema = z.object({
   type: z.enum(['KG', 'UNIT'], {
     required_error: "O'lchov (type) majburiy",
   }),
-  minAmount: z.coerce.number().min(0, "Minimal miqdor 0 dan kam bo'lmasin"),
+  priority: z.enum(['HIGH', 'LOW']).optional(),
 });
 
 type EditForm = z.infer<typeof EditSchema>;
@@ -40,6 +41,11 @@ type EditForm = z.infer<typeof EditSchema>;
 const typeOptions = [
   { id: 'KG', label: 'KG', value: 'KG' },
   { id: 'UNIT', label: 'DONA', value: 'UNIT' },
+];
+
+const priorityOptions = [
+  { id: 'LOW', label: 'Past', value: 'LOW' },
+  { id: 'HIGH', label: 'Yuqori', value: 'HIGH' },
 ];
 
 export function SheetEdit({
@@ -58,7 +64,7 @@ export function SheetEdit({
     defaultValues: {
       name: '',
       type: 'KG',
-      minAmount: 10,
+      priority: 'LOW',
     },
   });
 
@@ -71,7 +77,7 @@ export function SheetEdit({
       reset({
         name: material.name ?? '',
         type: (material.type as MeasureType) ?? 'KG',
-        minAmount: material.minAmount ?? 10,
+        priority: (material.priority as Priority) ?? 'LOW',
       });
     }
   }, [open, material, reset]);
@@ -87,7 +93,7 @@ export function SheetEdit({
         data: {
           name: formData.name.trim(),
           type: formData.type,
-          minAmount: formData.minAmount,
+          priority: formData.priority,
         },
       }).unwrap();
 
@@ -112,7 +118,7 @@ export function SheetEdit({
                 Xomashyoni tahrirlash
               </SheetTitle>
               <SheetDescription className="text-sm text-muted-foreground">
-                Faqat nomi va o‘lchovi (type) yangilanadi
+                Nomi, o'lchovi va muhimlik darajasi yangilanadi
               </SheetDescription>
             </div>
           </div>
@@ -175,29 +181,24 @@ export function SheetEdit({
               )}
             </div>
 
-            {/* Min Amount */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Box className="h-4 w-4 text-orange-500" />
-                <Label htmlFor="minAmount" className="text-sm font-medium">
-                  Minimal miqdor
-                </Label>
-              </div>
-              <Input
-                id="minAmount"
-                type="number"
-                min="0"
-                step="0.01"
-                {...register('minAmount', { valueAsNumber: true })}
-                className="h-11 bg-background/80 border-border/50 focus:border-primary/50"
-                placeholder="10"
+            {/* Priority */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-muted-foreground">
+                Muhimlik darajasi
+              </Label>
+              <SearchSelect
+                value={watch('priority') || 'LOW'}
+                onValueChange={(val) =>
+                  setValue('priority', val as EditForm['priority'], {
+                    shouldValidate: true,
+                  })
+                }
+                placeholder="Tanlang"
+                options={priorityOptions}
               />
-              <p className="text-xs text-muted-foreground">
-                Zaxira bu miqdordan kam bo'lganda ogohlantirish beriladi
-              </p>
-              {errors.minAmount && (
-                <div className="text-xs text-red-500 mt-1">
-                  {errors.minAmount.message}
+              {errors.priority && (
+                <div className="text-red-500 text-xs mt-1">
+                  {errors.priority.message}
                 </div>
               )}
             </div>

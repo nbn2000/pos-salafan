@@ -2,20 +2,12 @@ import { useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { getFilteredNavItems } from '@/constant/navbarMenu';
 import { cn } from '@/lib/utils';
-import { useLazyGetUserDataQuery } from '@/api/auth';
-import { useAppSelector } from '@/store/hooks';
+import { useUserData } from '@/hooks/useUserData';
 
 function Navbar({ shrink }: { shrink: boolean }) {
   const location = useLocation();
   const pathname = location.pathname;
-  const token = useAppSelector((state) => state.auth.token);
-  const [userTrigger, { data: userData }] = useLazyGetUserDataQuery();
-
-  useEffect(() => {
-    if (token) {
-      userTrigger();
-    }
-  }, [token, userTrigger]);
+  const { userData } = useUserData();
 
   // Get filtered navigation items based on user role
   const filteredNavItems = getFilteredNavItems(

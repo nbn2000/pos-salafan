@@ -28,9 +28,9 @@ export class ProductUpdateService extends ProductBaseService {
       logs.push(`Mahsulot turi ${mtLabel(entity.type)} -> ${mtLabel(dto.type)}.`);
       entity.type = dto.type;
     }
-    if (dto.priority !== undefined && dto.priority !== (entity as any).priority) {
-      logs.push(`Mahsulot prioriteti ${String((entity as any).priority)} -> ${String(dto.priority)}.`);
-      (entity as any).priority = dto.priority as any;
+    if (dto.priority !== undefined && dto.priority !== entity.priority) {
+      logs.push(`Mahsulot prioriteti ${String(entity.priority)} -> ${String(dto.priority)}.`);
+      entity.priority = dto.priority;
     }
 
     await this.productRepo.save(entity);

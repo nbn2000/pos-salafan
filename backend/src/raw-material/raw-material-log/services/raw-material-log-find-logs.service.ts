@@ -1,9 +1,8 @@
 // src/raw-material/raw-material-log/services/raw-material-log-find-logs.service.ts
 import { Injectable } from '@nestjs/common';
-import { PaginationQueryDto } from 'src/common/dtos/pagination-query.dto';
+import { FindOptionsWhere, In } from 'typeorm';
 import { RawMaterialLogQueryDto } from '../dto/raw-material-log-query.dto';
 import { RawMaterialLog } from '../entities/raw-material-log.entity';
-import { RawMaterialLogType } from 'src/common/enums/enum';
 import { RawMaterialLogListResult } from '../helper';
 import { RawMaterialLogBaseService } from './raw-material-log-base.service';
 
@@ -13,21 +12,49 @@ export class RawMaterialLogFindLogsService extends RawMaterialLogBaseService {
     const { page = 1, take = 6 } = query;
     const skip = (page - 1) * take;
 
-    const where: any = { isActive: true };
+    const where: FindOptionsWhere<RawMaterialLog> = { isActive: true };
     if (query.type) where.type = query.type;
 
-    const [entities, count]: [RawMaterialLog[], number] =
-      await this.repo.findAndCount({
+    const [entities, count] = await this.repo.findAndCount({
         where,
         relations: [
           'rawMaterial',
           'rawMaterialBatch',
           'rawMaterialBatch.rawMaterial',
         ],
+        withDeleted: true,
         order: { createdAt: 'DESC' },
         skip,
         take,
       });
+
+    // Manually rehydrate raw materials and batches including soft-deleted to ensure names are present
+    const rawIds = Array.from(
+      new Set(entities.map((e) => e.rawMaterialId).filter(Boolean)),
+    );
+    const batchIds = Array.from(
+      new Set(entities.map((e) => e.rawMaterialBatchId).filter(Boolean)),
+    );
+    const [raws, batches] = await Promise.all([
+      rawIds.length
+        ? this.rawRepo.find({ where: { id: In(rawIds) }, withDeleted: true })
+        : Promise.resolve([]),
+      batchIds.length
+        ? this.batchRepo.find({ where: { id: In(batchIds) }, withDeleted: true })
+        : Promise.resolve([]),
+    ]);
+    const rawById = new Map(raws.map((r) => [r.id, r]));
+    const batchById = new Map(batches.map((b) => [b.id, b]));
+    for (const e of entities) {
+      if (e.rawMaterialId) {
+        const r = rawById.get(e.rawMaterialId);
+        if (r) e.rawMaterial = r;
+      }
+      if (e.rawMaterialBatchId) {
+        const b = batchById.get(e.rawMaterialBatchId);
+        if (b) e.rawMaterialBatch = b;
+      }
+    }
 
     return {
       count,
@@ -38,7 +65,7 @@ export class RawMaterialLogFindLogsService extends RawMaterialLogBaseService {
         id: entity.id,
         createdAt: entity.createdAt,
         updatedAt: entity.updatedAt,
-        type: entity.type as RawMaterialLogType,
+        type: entity.type,
         rawMaterial: entity.rawMaterial
           ? {
               id: entity.rawMaterial.id,

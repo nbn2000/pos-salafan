@@ -7,15 +7,16 @@ import {
 import { RawMaterialLogResult, toLogResult } from '../helper';
 import { RawMaterialLogBaseService } from './raw-material-log-base.service';
 import { RawMaterialLogQueryDto } from '../dto/raw-material-log-query.dto';
-import { RawMaterialLogType } from 'src/common/enums/enum';
+import { FindOptionsWhere } from 'typeorm';
+import { RawMaterialLog } from '../entities/raw-material-log.entity';
 
 @Injectable()
 export class RawMaterialLogFindAllService extends RawMaterialLogBaseService {
   async findAll(
     query: RawMaterialLogQueryDto,
   ): Promise<PaginationResult<RawMaterialLogResult>> {
-    const baseWhere: any = { isActive: true };
-    if (query.type) baseWhere.type = query.type as RawMaterialLogType;
+    const baseWhere: FindOptionsWhere<RawMaterialLog> = { isActive: true };
+    if (query.type) baseWhere.type = query.type;
 
     const page = await paginateAndFilter(this.repo, query, baseWhere);
 

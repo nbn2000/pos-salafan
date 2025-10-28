@@ -70,8 +70,15 @@ export const productsApi = baseApi.injectEndpoints({
 
     addProduct: builder.mutation<ProductWithBatches, CreateProductPayload>({
       query: (data) => {
-        const { body } = buildBody(data);
-        return { url: 'product', method: 'POST', body };
+        const body = Object.fromEntries(
+          Object.entries(data).filter(([, v]) => v !== undefined),
+        );
+        return {
+          url: 'product',
+          method: 'POST',
+          body,
+          headers: { 'Content-Type': 'application/json' },
+        };
       },
       invalidatesTags: [
         { type: 'PRODUCTS', id: 'LIST' },

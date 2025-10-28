@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetUserDataQuery } from '@/api/auth';
-import { useAppSelector } from '@/store/hooks';
+import { useUserData } from '@/hooks/useUserData';
 import { IUserData } from '@/api/auth/type';
 
 interface ProtectedRouteProps {
@@ -14,16 +13,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiresAdmin = false,
 }) => {
   const navigate = useNavigate();
-  const token = useAppSelector((state) => state.auth.token);
-  const [userTrigger, { data, isLoading }] = useLazyGetUserDataQuery();
-
-  const userData: IUserData | undefined = data;
-
-  useEffect(() => {
-    if (token) {
-      userTrigger();
-    }
-  }, [token, userTrigger]);
+  const { userData, isLoading } = useUserData();
 
   useEffect(() => {
     if (

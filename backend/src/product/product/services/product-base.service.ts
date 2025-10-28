@@ -50,7 +50,7 @@ export class ProductBaseService {
       updatedAt: entity.updatedAt,
       name: entity.name,
       type: entity.type,
-      priority: (entity as any).priority,
+      priority: entity.priority,
       batches,
       totalBatchAmount,
     };

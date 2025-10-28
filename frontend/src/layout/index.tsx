@@ -11,8 +11,7 @@ import { toggleShrink } from '@/store/slices/uiSlice';
 import { cn } from '@/lib/utils';
 import { persistor } from '@/store';
 import { clearCart } from '@/store/slices/cartSlice';
-import { useLazyGetUserDataQuery } from '@/api/auth';
-import { useEffect } from 'react';
+import { useUserData } from '@/hooks/useUserData';
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -24,12 +23,7 @@ const RootLayout = ({ children, className }: RootLayoutProps) => {
   const shrink = useAppSelector((state) => state.ui.shrink);
   const navigate = useNavigate();
   const location = useLocation();
-  const token = useAppSelector((state) => state.auth.token);
-  const [userTrigger, { data: userData }] = useLazyGetUserDataQuery();
-
-  useEffect(() => {
-    if (token) userTrigger();
-  }, [token, userTrigger]);
+  const { userData } = useUserData();
 
   const usernameInitial =
     userData?.user.username?.charAt(0)?.toUpperCase() || 'U';

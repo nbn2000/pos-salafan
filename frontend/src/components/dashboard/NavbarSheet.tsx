@@ -9,22 +9,14 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { logout } from '@/store/slices/authSlice';
 import { clearCart } from '@/store/slices/cartSlice';
 import { persistor } from '@/store';
-import { useLazyGetUserDataQuery } from '@/api/auth';
-import { useEffect } from 'react';
+import { useUserData } from '@/hooks/useUserData';
 
 export function NavbarSheet() {
   const location = useLocation();
   const pathname = location.pathname;
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const token = useAppSelector((state) => state.auth.token);
-  const [userTrigger, { data: userData }] = useLazyGetUserDataQuery();
-
-  useEffect(() => {
-    if (token) {
-      userTrigger();
-    }
-  }, [token, userTrigger]);
+  const { userData } = useUserData();
 
   // Get filtered navigation items based on user role
   const filteredNavItems = getFilteredNavItems(

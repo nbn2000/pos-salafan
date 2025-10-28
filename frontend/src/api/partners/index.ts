@@ -36,6 +36,39 @@ export const partnersApi = baseApi.injectEndpoints({
       providesTags: ['SUPPLIERS'],
     }),
 
+    getPartnersWithFinance: builder.query<PaginationResult<SupplierFinanceRow>, PaginationQuery | void>({
+      query: (args) => {
+        const {
+          page = 1,
+          take = 6,
+          search,
+          searchField = 'name',
+          sortField = 'createdAt',
+          sortOrder = 'DESC',
+        } = args ?? {};
+
+        const params: Record<string, string | number> = {
+          page,
+          take,
+          searchField,
+          sortField,
+          sortOrder,
+        };
+
+        const s = typeof search === 'string' ? search.trim() : '';
+        if (s !== '') {
+          params.search = s;
+        }
+
+        return {
+          url: 'supplier/raw-materials-finance',
+          method: 'GET',
+          params,
+        };
+      },
+      providesTags: ['SUPPLIERS'],
+    }),
+
     getPartnersFinance: builder.query<SupplierMaterialsFinance, string | void>({
       query: (id) => {
         return {
@@ -79,6 +112,7 @@ export const partnersApi = baseApi.injectEndpoints({
 
 export const {
   useGetPartnersQuery,
+  useGetPartnersWithFinanceQuery,
   useGetPartnersFinanceQuery,
   useAddPartnersMutation,
   useUpdatePartnersMutation,

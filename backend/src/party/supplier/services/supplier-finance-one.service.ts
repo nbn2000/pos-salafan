@@ -119,6 +119,7 @@ export class SupplierFinanceOneService extends SupplierFinanceBaseService {
             createdAt: p.createdAt,
             amount: Number(p.amount),
             paymentType: p.paymentType,
+            comment: p.comment ?? '',
           }));
 
         materialCredit += currentCredit;

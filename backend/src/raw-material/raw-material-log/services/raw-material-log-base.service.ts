@@ -35,10 +35,37 @@ export class RawMaterialLogBaseService {
     ids: string[],
   ): Promise<Map<string, RawMaterialLog>> {
     if (!ids.length) return new Map();
-    const full = await this.repo.find({
-      where: { id: In(ids) },
-      relations: this.RELATIONS as unknown as string[],
-    });
+    // Load logs themselves (including soft-deleted state if any future case)
+    const full = await this.repo.find({ where: { id: In(ids) }, withDeleted: true });
+
+    // Preload related RawMaterial and Batch INCLUDING soft-deleted
+    const rawIds = Array.from(new Set(full.map((l) => l.rawMaterialId).filter(Boolean)));
+    const batchIds = Array.from(new Set(full.map((l) => l.rawMaterialBatchId).filter(Boolean)));
+
+    const [raws, batches] = await Promise.all([
+      rawIds.length
+        ? this.rawRepo.find({ where: { id: In(rawIds) }, withDeleted: true })
+        : Promise.resolve([] as RawMaterial[]),
+      batchIds.length
+        ? this.batchRepo.find({ where: { id: In(batchIds) }, withDeleted: true })
+        : Promise.resolve([] as RawMaterialBatch[]),
+    ]);
+
+    const rawById = new Map(raws.map((r) => [r.id, r]));
+    const batchById = new Map(batches.map((b) => [b.id, b]));
+
+    for (const l of full) {
+      // Attach even if related is soft-deleted to expose name + flags
+      if (l.rawMaterialId) {
+        const r = rawById.get(l.rawMaterialId);
+        if (r) l.rawMaterial = r;
+      }
+      if (l.rawMaterialBatchId) {
+        const b = batchById.get(l.rawMaterialBatchId);
+        if (b) l.rawMaterialBatch = b;
+      }
+    }
+
     return new Map(full.map((l) => [l.id, l]));
   }
 

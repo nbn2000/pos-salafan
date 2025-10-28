@@ -2,7 +2,7 @@
 type ISODateString = string;
 
 // ==== Raw Material Log Types ====
-type RawMaterialLogType = 'ADD' | 'ADD_BATCH' | 'CHANGE' | 'CHANGE_BATCH' | 'DELETE' | 'DELETE_BATCH';
+type RawMaterialLogType = 'ADD' | 'ADD_BATCH' | 'CHANGE' | 'CHANGE_BATCH' | 'DELETE' | 'DELETE_BATCH' | 'DELETE-BATCH' | 'CHANGE-BATCH';
 
 // ==== Flat Log Result (from /api/raw-material-log) ====
 declare interface RawMaterialLogResult {
@@ -11,6 +11,8 @@ declare interface RawMaterialLogResult {
   updatedAt: ISODateString;
   rawMaterialId: UUID;
   rawMaterialName: string;
+  rawMaterialIsActive: boolean;
+  rawMaterialDeletedAt?: ISODateString | null;
   rawMaterialBatchId: UUID;
   amount: number;
   comment: string;

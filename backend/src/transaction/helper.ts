@@ -152,13 +152,25 @@ export function toTResult(
   client: Client | null,
   finance: TxFinanceSummary,
 ): TransactionResult {
+  // Prefer explicit transaction.comment; otherwise, synthesize a helpful fallback
+  let comment: string | null = entity.comment ?? null;
+  if (!comment) {
+    if ((finance?.due ?? 0) > 0) {
+      comment = `Sotuv tranzaksiyasi uchun qarz ${entity.id} (qolgan qismi)`;
+    } else if ((finance?.paid ?? 0) > 0) {
+      comment = `Sotuv tranzaksiyasi uchun to'lov ${entity.id}`;
+    } else {
+      comment = `Sotuv tranzaksiyasi ${entity.id}`;
+    }
+  }
+
   return {
     id: entity.id,
     createdAt: entity.createdAt,
     updatedAt: entity.updatedAt,
     totalSoldPrice: Number(entity.totalSoldPrice),
     products: prodItems.length ? prodItems : null,
-    comment: entity.comment ?? null,
+    comment,
 
     isReversed: !!entity.isReversed,
     reversedAt: entity.reversedAt ?? null,

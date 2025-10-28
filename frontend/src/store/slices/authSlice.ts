@@ -27,6 +27,9 @@ const authSlice = createSlice({
     logout: (state) => {
       state.token = null;
       state.refreshToken = null;
+      // Clear cached user data from localStorage
+      localStorage.removeItem('pos_user_data');
+      localStorage.removeItem('pos_user_data_timestamp');
     },
   },
 });

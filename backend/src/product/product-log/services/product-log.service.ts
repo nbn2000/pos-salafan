@@ -2,6 +2,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Product } from '../../product/entities/product.entity';
+import { ProductBatch } from '../../product-batch/entities/product-batch.entity';
 import { PaginationQueryDto } from 'src/common/dtos/pagination-query.dto';
 import { PaginationResult } from 'src/common/utils/pagination.util';
 import { ProductLog } from '../entities/product-log.entity';
@@ -18,12 +20,16 @@ export class ProductLogService extends ProductLogBaseService {
   constructor(
     @InjectRepository(ProductLog)
     logRepo: Repository<ProductLog>,
+    @InjectRepository(Product)
+    productRepo: Repository<Product>,
+    @InjectRepository(ProductBatch)
+    batchRepo: Repository<ProductBatch>,
     private readonly finderAll: ProductLogFindAllService,
     private readonly finderOne: ProductLogFindOneService,
     private readonly remover: ProductLogRemoveService,
     private readonly listFinder: ProductLogFindLogsService,
   ) {
-    super(logRepo);
+    super(logRepo, productRepo, batchRepo);
   }
 
   findAll(query: ProductLogQueryDto | PaginationQueryDto): Promise<PaginationResult<ProductLogResult>> {

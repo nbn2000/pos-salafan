@@ -98,19 +98,9 @@ export function ModernBatchForm({
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-4 p-4 bg-muted/20 rounded-lg">
-              {product.images && product.images.length > 0 ? (
-                <div className="w-12 h-12 rounded-lg overflow-hidden border border-border/50">
-                  <img
-                    src={`${import.meta.env.VITE_BASE_URL?.split('api')[0] ?? ''}${product.images[0].url}`}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Package className="w-6 h-6 text-primary" />
-                </div>
-              )}
+              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Package className="w-6 h-6 text-primary" />
+              </div>
               <div>
                 <h3 className="font-semibold">{product.name}</h3>
                 <p className="text-sm text-muted-foreground">

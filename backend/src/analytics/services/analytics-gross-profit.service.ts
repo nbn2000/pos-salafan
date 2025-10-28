@@ -12,17 +12,16 @@ export class AnalyticsGrossProfitService extends AnalyticsBaseService {
   async grossProfitProducts(from: Date, to: Date): Promise<number> {
     const row = await this.txProdBatchRepo
       .createQueryBuilder('tpb')
+      .withDeleted() // include soft-deleted rows for joined aliases
       .innerJoin('tpb.transaction', 't')
       .innerJoin('tpb.transactionProduct', 'tp')
-      .innerJoin('tp.product', 'p')
       .innerJoin('tpb.productBatch', 'pb')
       .select(
         `COALESCE(SUM(COALESCE(tpb.amount,0) * ((COALESCE(tp.soldPrice, pb.sellPrice, 0)) - COALESCE(pb.cost,0))),0)`,
         'total',
       )
-      .where(
-        'tpb.isActive = true AND t.isActive = true AND tp.isActive = true AND p.isActive = true AND pb.isActive = true',
-      )
+      .where('t.isActive = true')
+      .andWhere('t.isReversed = false')
       .andWhere('t.createdAt >= :from', { from })
       .andWhere('t.createdAt <= :to', { to })
       .getRawOne<{ total: string }>();

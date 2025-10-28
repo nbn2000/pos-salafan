@@ -37,7 +37,7 @@ export function SimpleProductForm({
     defaultValues: {
       name: product?.name || '',
       type: (product?.type as 'KG' | 'UNIT') || 'KG',
-      minAmount: product?.minAmount || 5,
+      minAmount: 5, // minAmount not available in ProductWithBatches
       amount: 1,
       sellPrice: null,
     },

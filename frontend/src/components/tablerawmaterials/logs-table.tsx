@@ -4,7 +4,7 @@ import { useGetRawMaterialLogsQuery } from '@/api/raw-materials/raw-material-log
 import { UniversalPage } from '@/components/common/UniversalPage';
 import { UniversalTable } from '@/components/common/UniversalTable';
 import SkeletonRow from '@/components/skeleton/products';
-import { FlaskConical, Hash, Tag, Calendar, Box, Plus, Minus, ArrowRightLeft, DollarSign, Package } from 'lucide-react';
+import { FlaskConical, Hash, Tag, Calendar, Box, Plus, Minus, ArrowRightLeft, DollarSign, Package, Activity } from 'lucide-react';
 import { formatQuantity } from '@/lib/utils';
 import { useLocation } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +18,8 @@ const logTypeTranslations: Record<RawMaterialLogType, string> = {
   'CHANGE_BATCH': 'Partiya o\'zgartirildi',
   'DELETE': 'O\'chirildi',
   'DELETE_BATCH': 'Partiya o\'chirildi',
+  'DELETE-BATCH': 'Partiya o\'chirildi',
+  'CHANGE-BATCH': 'Partiya o\'zgartirildi',
 };
 
 // Log type colors
@@ -26,8 +28,10 @@ const logTypeColors: Record<RawMaterialLogType, string> = {
   'ADD_BATCH': 'bg-green-100 text-green-800 hover:bg-green-200',
   'CHANGE': 'bg-blue-100 text-blue-800 hover:bg-blue-200',
   'CHANGE_BATCH': 'bg-blue-100 text-blue-800 hover:bg-blue-200',
+  'CHANGE-BATCH': 'bg-blue-100 text-blue-800 hover:bg-blue-200',
   'DELETE': 'bg-red-100 text-red-800 hover:bg-red-200',
   'DELETE_BATCH': 'bg-red-100 text-red-800 hover:bg-red-200',
+  'DELETE-BATCH': 'bg-red-100 text-red-800 hover:bg-red-200',
 };
 
 const PAGE_SIZE = 6;
@@ -82,14 +86,16 @@ export default function RawMaterialLogsTableEmbed() {
       case 'ADD':
       case 'ADD_BATCH':
         return <Plus className="h-3 w-3" />;
-      case 'DELETE':
-      case 'DELETE_BATCH':
-        return <Minus className="h-3 w-3" />;
       case 'CHANGE':
       case 'CHANGE_BATCH':
+      case 'CHANGE-BATCH':
         return <ArrowRightLeft className="h-3 w-3" />;
+      case 'DELETE':
+      case 'DELETE_BATCH':
+      case 'DELETE-BATCH':
+        return <Minus className="h-3 w-3" />;
       default:
-        return <Tag className="h-3 w-3" />;
+        return <Activity className="h-3 w-3" />;
     }
   };
 

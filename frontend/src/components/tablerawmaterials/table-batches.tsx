@@ -73,9 +73,11 @@ export default function TableRawMaterialsBatches() {
 
   const rowNumberMap = useMemo(() => {
     const map = new Map<string, number>();
-    filteredAndSortedData.forEach((item: MaterialBatchSummary, index: number) => {
-      map.set(item.id, (pageNumber - 1) * effectivePageSize + index + 1);
-    });
+    filteredAndSortedData.forEach(
+      (item: MaterialBatchSummary, index: number) => {
+        map.set(item.id, (pageNumber - 1) * effectivePageSize + index + 1);
+      }
+    );
     return map;
   }, [filteredAndSortedData, pageNumber, effectivePageSize]);
 
@@ -108,7 +110,9 @@ export default function TableRawMaterialsBatches() {
       header: 'Miqdori',
       icon: <Tag className="h-4 w-4 text-primary" />,
       render: (item: MaterialBatchSummary) => (
-        <div className="text-sm text-black">{item.amount}</div>
+        <div className="text-sm font-semibold text-foreground">
+          {item.amount}
+        </div>
       ),
     },
 
@@ -117,7 +121,7 @@ export default function TableRawMaterialsBatches() {
       header: 'Valyuta kursi',
       icon: <DollarSign className="h-4 w-4 text-primary" />,
       render: (item: MaterialBatchSummary) => (
-        <span className="text-sm text-black">
+        <span className="text-sm font-semibold text-foreground">
           {Number(item.buyPrice ?? 0).toLocaleString('uz-UZ')} so'm
         </span>
       ),
@@ -128,7 +132,7 @@ export default function TableRawMaterialsBatches() {
       icon: <DollarSign className="h-4 w-4 text-primary" />,
       render: (item: MaterialBatchSummary) =>
         item.buyPrice ? (
-          <span className="text-sm ">
+          <span className="text-sm font-semibold text-foreground">
             {item?.buyPrice.toLocaleString('uz-UZ')} so'm / ${' '}
             {item?.buyPrice.toLocaleString('en-US', {
               maximumFractionDigits: 8,

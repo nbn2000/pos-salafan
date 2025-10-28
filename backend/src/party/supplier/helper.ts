@@ -68,6 +68,7 @@ export interface SupplierPaymentView {
   createdAt: Date;
   amount: number;
   paymentType: PaymentType;
+  comment: string;
 }
 
 /** Non-paginated, single supplier row (pretty view) */

@@ -40,9 +40,11 @@ type CustomerForm = z.infer<typeof CustomerSchema>;
 export function AddDebtorDialog({
   open,
   onClose,
+  onClientCreated,
 }: {
   open: boolean;
   onClose: () => void;
+  onClientCreated?: (client: { id: string; name: string; phone: string }) => void;
 }) {
   const methods = useForm<CustomerForm>({
     resolver: zodResolver(CustomerSchema),
@@ -65,12 +67,22 @@ export function AddDebtorDialog({
 
   const onSubmit = async (form: CustomerForm) => {
     try {
-      await createCustomer({
+      const createdClient = await createCustomer({
         name: form.name.trim(),
         phone: `+998${form.phone}`,
       }).unwrap();
 
       toast.success("Mijoz qo'shildi");
+      
+      // Call the callback with the created client data
+      if (onClientCreated && createdClient) {
+        onClientCreated({
+          id: createdClient.id,
+          name: createdClient.name,
+          phone: createdClient.phone,
+        });
+      }
+      
       reset();
       onClose();
     } catch (error: any) {
