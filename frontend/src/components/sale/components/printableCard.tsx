@@ -276,6 +276,7 @@ export function PrintableCard({
 
   const { data: debtorsData } = useGetClientsQuery({
     page: 1,
+    take: 99999,
     search: debtorSearch,
   });
 

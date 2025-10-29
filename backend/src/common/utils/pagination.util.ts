@@ -44,7 +44,7 @@ export async function paginateAndFilter<T extends ObjectLiteral>(
 ): Promise<PaginationResult<T>> {
   const {
     page = 1,
-    take = 6,
+    take = 99999,
     search,
     searchField,
     sortField = 'createdAt',

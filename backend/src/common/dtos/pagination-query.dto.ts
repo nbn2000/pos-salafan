@@ -18,14 +18,14 @@ export class PaginationQueryDto {
   page?: number = 1;
 
   @ApiPropertyOptional({
-    example: 6,
-    description: 'Items per page (default: 6)',
+    example: 99999,
+    description: 'Items per page (default: 99999)',
   })
   @Type(() => Number)
   @IsOptional()
   @IsInt()
   @IsPositive()
-  take?: number = 6;
+  take?: number = 99999;
 
   @ApiPropertyOptional({ example: '', description: 'Search value' })
   @IsOptional()

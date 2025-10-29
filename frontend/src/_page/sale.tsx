@@ -7,18 +7,9 @@ import { ShoppingCart } from 'lucide-react';
 const page = () => {
   return (
     <RootLayout className="border-none">
-      <UniversalPage
-        header={{
-          title: 'Sotuv',
-          description: 'Mahsulotlarni sotish va savat boshqaruvi',
-          icon: <ShoppingCart />,
-        }}
-        showBreadcrumb
-      >
-        <ErrorBoundary>
-          <UniversalSale />
-        </ErrorBoundary>
-      </UniversalPage>
+      <ErrorBoundary>
+        <UniversalSale />
+      </ErrorBoundary>
     </RootLayout>
   );
 };
